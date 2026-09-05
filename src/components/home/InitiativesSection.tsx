@@ -7,6 +7,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { Badge, toneOfStatus } from "@/components/ui/Badge";
 import { initiatives } from "@/data/initiatives";
+import { associationsById } from "@/data/associations";
+import { needCategories } from "@/data/categories";
 import { usePrefersReducedMotion } from "@/hooks/usePrefersReducedMotion";
 import { cn } from "@/lib/cn";
 import type { Initiative } from "@/types";
@@ -69,10 +71,12 @@ function InitiativeCard({
     <article className={cn(styles.card, active && styles.active)}>
       <Badge tone={toneOfStatus[item.status]}>{item.statusLabel}</Badge>
       <h3>{item.title}</h3>
-      <span className={styles.org}>{item.org}</span>
+      <span className={styles.org}>
+        {associationsById.get(item.associationId)?.name}
+      </span>
       <div className={styles.meta}>
         <span>{item.city}</span>
-        <span>{item.category}</span>
+        <span>{needCategories[item.category]}</span>
       </div>
       <div className={styles.foot}>
         <Link className={styles.link} href={`/initiatives/${item.id}`}>

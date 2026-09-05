@@ -1,0 +1,293 @@
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 24px;
+  align-items: start;
+}
+
+.side {
+  position: sticky;
+  /* الهيدر ثابت، فتبدأ اللوحة تحته */
+  top: calc(var(--nav-h) + 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sideCard {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(4, 11, 18, 0.55);
+  backdrop-filter: blur(8px);
+  padding: 20px;
+}
+
+.sideCard h4 {
+  font-size: 0.86rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin-top: 12px;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.progress b {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.84rem;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.progress b span {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.progress i {
+  display: block;
+  height: 9px;
+  border-radius: 5px;
+  background: rgba(234, 242, 245, 0.1);
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.progress i em {
+  display: block;
+  height: 100%;
+  border-radius: 5px;
+  background: var(--accent);
+  box-shadow: 0 0 16px rgba(22, 179, 160, 0.5);
+}
+
+.kv {
+  display: flex;
+  flex-direction: column;
+  margin: 14px 0 0;
+}
+
+.kv > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(234, 242, 245, 0.07);
+  font-size: 0.86rem;
+}
+
+.kv > div:last-child {
+  border-bottom: 0;
+}
+
+.kv dt {
+  color: var(--dim);
+  margin: 0;
+}
+
+.kv dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.org {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.orgLogo {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  flex: 0 0 auto;
+  background: linear-gradient(
+    160deg,
+    rgba(22, 179, 160, 0.3),
+    rgba(14, 43, 69, 0.65)
+  );
+  border: 1px solid rgba(22, 179, 160, 0.32);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.org b {
+  display: block;
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.org span {
+  font-size: 0.76rem;
+  color: var(--dim);
+}
+
+/* مراحل التنفيذ */
+.steps {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+}
+
+.step {
+  display: flex;
+  gap: 14px;
+  padding-bottom: 18px;
+  position: relative;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.step::before {
+  content: "";
+  position: absolute;
+  inset-inline-end: 6px;
+  top: 18px;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+.step:last-child::before {
+  display: none;
+}
+
+.knob {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  margin-top: 5px;
+  background: #0a1722;
+  border: 2px solid rgba(143, 169, 188, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+.done .knob {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.now .knob {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 5px rgba(22, 179, 160, 0.15);
+}
+
+.step b {
+  display: block;
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.step span {
+  font-size: 0.84rem;
+  color: var(--muted);
+}
+
+/* خانات الاحتياج الذي بُنيت عليه */
+.basis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.cell {
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+  background: rgba(234, 242, 245, 0.04);
+}
+
+.cell b {
+  display: block;
+  font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.cell span {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.share {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.share button {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 15px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+  background: rgba(234, 242, 245, 0.03);
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.share button:hover {
+  color: var(--text);
+  border-color: rgba(22, 179, 160, 0.45);
+  background: rgba(22, 179, 160, 0.08);
+}
+
+.share i {
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+}
+
+.similar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1000px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+
+  .side {
+    position: static;
+  }
+
+  .basis,
+  .similar {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .basis,
+  .similar {
+    grid-template-columns: 1fr;
+  }
+}

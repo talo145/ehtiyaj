@@ -213,3 +213,198 @@ h3 {
     font-size: 0.86rem;
   }
 }
+
+/* ================= ترويسة الصفحات الداخلية ================= */
+.page-head {
+  padding: 44px 0 24px;
+}
+
+.page-head .crumb {
+  font-size: 0.78rem;
+  color: var(--dim);
+  margin: 0 0 14px;
+}
+
+.page-head .crumb a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.page-head .crumb a:hover {
+  color: var(--accent);
+}
+
+.page-head h1 {
+  font-size: clamp(1.9rem, 4.2vw, 3.1rem);
+  letter-spacing: -0.03em;
+}
+
+.page-head .sub {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 0.98rem;
+  line-height: 1.8;
+  max-width: 62ch;
+}
+
+/* لوحة محتوى موحّدة تُعاد في الصفحات الداخلية */
+.panel {
+  background: rgba(234, 242, 245, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 22px;
+}
+
+.panel h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.panel .hint {
+  margin: 0 0 14px;
+  color: var(--dim);
+  font-size: 0.8rem;
+}
+
+.panel p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.85;
+}
+
+/* عنوان قسم داخل الصفحة */
+.sec-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin: 44px 0 16px;
+}
+
+.sec-title h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.sec-title .cnt {
+  font-size: 0.8rem;
+  color: var(--dim);
+}
+
+.sec-title .more {
+  margin-inline-start: auto;
+  font-size: 0.84rem;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* شريط أرقام زجاجي */
+.stat-bar {
+  display: grid;
+  background: rgba(4, 11, 18, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+
+.stat-bar > div {
+  padding: 16px 14px;
+  text-align: center;
+  border-inline-start: 1px solid var(--line);
+}
+
+.stat-bar > div:first-child {
+  border-inline-start: 0;
+}
+
+.stat-bar b {
+  display: block;
+  font-size: clamp(1.3rem, 2.5vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.stat-bar span {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.76rem;
+  color: var(--muted);
+}
+
+/* زر العودة أعلى صفحات التفاصيل */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  margin: 34px 0 22px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 18px;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.back-link .arrow {
+  font-size: 1.25em;
+}
+
+.back-link:hover {
+  color: var(--accent);
+  border-color: rgba(22, 179, 160, 0.45);
+  background: rgba(22, 179, 160, 0.08);
+}
+
+/* نداء الانضمام أسفل الصفحات */
+.join-bar {
+  margin: 52px 0 0;
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 30px;
+  background: linear-gradient(
+    120deg,
+    rgba(22, 179, 160, 0.1),
+    rgba(234, 242, 245, 0.03)
+  );
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.join-bar h3 {
+  font-size: 1.3rem;
+}
+
+.join-bar p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  max-width: 56ch;
+}
+
+.join-bar > a {
+  margin-inline-start: auto;
+}
+
+@media (max-width: 760px) {
+  .page-head {
+    padding: 30px 0 18px;
+  }
+
+  .join-bar {
+    padding: 22px;
+  }
+
+  .join-bar > a {
+    margin-inline-start: 0;
+    width: 100%;
+  }
+}

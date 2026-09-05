@@ -17,13 +17,13 @@ export interface NavLink {
   href: string;
 }
 
-/** روابط الهيدر. ما لم تُبنَ صفحته بعد يشير إلى قسمه في الصفحة الرئيسية. */
+/** روابط الهيدر — كل رابط ينقل إلى صفحته المستقلة، لا إلى قسم في الرئيسية. */
 export const navLinks: NavLink[] = [
   { label: "الرئيسية", href: "/" },
-  { label: "عن احتياج", href: "/#about" },
-  { label: "الجمعيات", href: "/#associations" },
-  { label: "المبادرات", href: "/#initiatives" },
-  { label: "خريطة الاحتياج", href: "/#needs-map" },
+  { label: "عن احتياج", href: "/about" },
+  { label: "الجمعيات", href: "/associations" },
+  { label: "المبادرات", href: "/initiatives" },
+  { label: "خريطة الاحتياج", href: "/needs-map" },
 ];
 
 export interface FooterColumn {
@@ -36,10 +36,10 @@ export const footerColumns: FooterColumn[] = [
     title: "الموقع",
     links: [
       { label: "الرئيسية", href: "/" },
-      { label: "عن احتياج", href: "/#about" },
-      { label: "خريطة الاحتياج", href: "/#needs-map" },
-      { label: "الجمعيات", href: "/#associations" },
-      { label: "المبادرات", href: "/#initiatives" },
+      { label: "عن احتياج", href: "/about" },
+      { label: "خريطة الاحتياج", href: "/needs-map" },
+      { label: "الجمعيات", href: "/associations" },
+      { label: "المبادرات", href: "/initiatives" },
     ],
   },
   {

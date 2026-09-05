@@ -22,7 +22,7 @@ function AssociationCard({ a }: { a: Association }) {
         {a.initial}
       </span>
       <b className={styles.title}>{a.name}</b>
-      <span className={styles.city}>{a.city}</span>
+      <span className={styles.city}>{a.place}</span>
       <div className={styles.stats}>
         <div>
           <b className="tabular">{formatNumber(a.initiatives)}</b>

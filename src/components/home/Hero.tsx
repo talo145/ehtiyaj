@@ -29,7 +29,7 @@ export function Hero() {
           </h1>
 
           <div className={styles.cta}>
-            <Button href="/#needs-map" variant="cta" size="lg" withArrow>
+            <Button href="/needs-map" variant="cta" size="lg" withArrow>
               استكشف خريطة الاحتياج
             </Button>
             <Button href="/#about" variant="text">

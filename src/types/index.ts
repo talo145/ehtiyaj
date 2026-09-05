@@ -14,11 +14,15 @@ export interface Association {
   name: string;
   /** الحرف الظاهر داخل مربّع الشعار إلى أن تتوفر شعارات فعلية. */
   initial: string;
-  city: string;
-  /** نطاق التغطية الجغرافي والتصنيفي للجمعية. */
+  /** اسم الموقع الفعلي داخل بيانات الخريطة — مدينة أو قرية. */
+  place: string;
+  governorate: string;
+  /** نطاق التغطية الجغرافي والتصنيفي، بصياغة تُعرض للزائر. */
   scope: string;
   initiatives: number;
   needs: number;
+  /** فهارس التصنيفات المعتمَدة للجمعية داخل `needCategories`. */
+  categories: number[];
 }
 
 export type InitiativeStatus = "active" | "completed" | "upcoming";
@@ -26,11 +30,22 @@ export type InitiativeStatus = "active" | "completed" | "upcoming";
 export interface Initiative {
   id: string;
   title: string;
-  org: string;
+  /** الجمعية المنفّذة. */
+  associationId: string;
   city: string;
-  category: string;
-  statusLabel: string;
+  /** فهرس التصنيف داخل `needCategories`. */
+  category: number;
   status: InitiativeStatus;
+  statusLabel: string;
+  /** شهر الانطلاق بالتقويم الهجري. */
+  startedAt: string;
+  /** نسبة الإنجاز 0–100. */
+  progress: number;
+  beneficiaries: number;
+  /** عدد الاحتياجات المستهدفة التي بُنيت عليها المبادرة. */
+  target: number;
+  /** عدد المدن والقرى التي تشملها. */
+  places: number;
 }
 
 export interface FlowStage {

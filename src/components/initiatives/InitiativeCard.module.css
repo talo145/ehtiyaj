@@ -1,0 +1,95 @@
+.card {
+  background: rgba(3, 9, 16, 0.66);
+  border: 1px solid rgba(234, 242, 245, 0.1);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease,
+    transform 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(22, 179, 160, 0.45);
+  background: rgba(4, 12, 20, 0.8);
+  transform: translateY(-3px);
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.org {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 0.74rem;
+  color: var(--dim);
+}
+
+/* شريط تقدّم للمبادرات الجارية فقط */
+.progress b {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: var(--dim);
+  font-weight: 500;
+}
+
+.progress i {
+  display: block;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(234, 242, 245, 0.09);
+  margin-top: 5px;
+  overflow: hidden;
+}
+
+.progress i em {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--accent);
+  box-shadow: 0 0 10px rgba(22, 179, 160, 0.4);
+}
+
+.foot {
+  margin-top: auto;
+  padding-top: 13px;
+}
+
+/* زر واضح بعرض البطاقة بدل رابط نصّي خافت */
+.go {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: rgba(22, 179, 160, 0.13);
+  color: var(--accent);
+  border: 1px solid rgba(22, 179, 160, 0.4);
+  border-radius: 11px;
+  padding: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.go:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
