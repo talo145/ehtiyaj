@@ -1,0 +1,145 @@
+.section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-block: clamp(72px, 9vh, 110px) 0;
+}
+
+/* النص في شريط مستقل أعلى الخريطة، لا فوقها، كي يبقى مقروءًا */
+.head {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 auto;
+  text-align: center;
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding: 0 24px clamp(10px, 1.8vh, 20px);
+}
+
+.head h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4.2vw, 3.1rem);
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+.head p {
+  margin: 10px auto 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  max-width: 52ch;
+  line-height: 1.75;
+}
+
+/* الأرقام مسحوبة لأعلى فوق حافة الخريطة كشريط زجاجي واحد */
+.foot {
+  position: relative;
+  z-index: 4;
+  flex: 0 0 auto;
+  width: 100%;
+  max-width: 1060px;
+  margin: -52px auto 0;
+  padding: 0 24px 34px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.nums {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: rgba(4, 11, 18, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+
+.num {
+  padding: 16px 14px;
+  text-align: center;
+  border-inline-start: 1px solid var(--line);
+}
+
+.num:first-child {
+  border-inline-start: 0;
+}
+
+.num b {
+  display: block;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--text);
+}
+
+.num span {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.cta {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 1000px) {
+  .head {
+    padding-inline: 22px;
+  }
+}
+
+@media (max-width: 640px) {
+  .head {
+    padding-inline: 18px;
+  }
+
+  .head h2 {
+    font-size: clamp(1.7rem, 8vw, 2.2rem);
+  }
+
+  .head p {
+    font-size: 0.82rem;
+    max-width: 34ch;
+  }
+
+  .foot {
+    margin-top: -26px;
+    padding: 0 16px 26px;
+    gap: 14px;
+  }
+
+  .nums {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .num {
+    padding: 13px 10px;
+    border-top: 1px solid var(--line);
+  }
+
+  .num:nth-child(-n + 2) {
+    border-top: 0;
+  }
+
+  .num:nth-child(odd) {
+    border-inline-start: 0;
+  }
+
+  .num b {
+    font-size: clamp(1.3rem, 7vw, 1.7rem);
+  }
+
+  .num span {
+    font-size: 0.72rem;
+  }
+
+  .cta a {
+    width: 100%;
+  }
+}

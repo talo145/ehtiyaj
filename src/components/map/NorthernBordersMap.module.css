@@ -1,0 +1,235 @@
+/* خريطة منطقة الحدود الشمالية: حدود المحافظات مقصوصة على حدّ المنطقة،
+   ونقاط نابضة على المدن والقرى، وصورة معلم تملأ حدود المحافظة عند اختيارها. */
+.box {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: clamp(260px, 40vh, 520px);
+  /* تلاشٍ سفلي يوصل الخريطة بالأرقام تحتها بلا حافة */
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0,
+    #000 60%,
+    rgba(0, 0, 0, 0.5) 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0,
+    #000 60%,
+    rgba(0, 0, 0, 0.5) 82%,
+    transparent 100%
+  );
+}
+
+.box svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.gv {
+  fill: rgba(22, 179, 160, 0.09);
+  stroke: rgba(22, 179, 160, 0.55);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  cursor: pointer;
+  transition:
+    fill 0.3s ease,
+    stroke 0.3s ease,
+    opacity 0.3s ease;
+}
+
+/* تدرّج طفيف في التعبئة يميّز المحافظات المتجاورة دون ألوان إضافية */
+.gv[data-i="1"] {
+  fill: rgba(22, 179, 160, 0.13);
+}
+.gv[data-i="2"] {
+  fill: rgba(22, 179, 160, 0.07);
+}
+.gv[data-i="3"] {
+  fill: rgba(22, 179, 160, 0.11);
+}
+
+/* حلقة التركيز الافتراضية للمتصفح كانت تظهر كمربّع أبيض فوق الشكل */
+.gv:focus {
+  outline: none;
+}
+
+.gv:focus-visible {
+  outline: none;
+  stroke: #eaf2f5;
+  stroke-width: 3;
+}
+
+.gv:hover {
+  fill: rgba(22, 179, 160, 0.26);
+  stroke: var(--accent);
+  stroke-width: 2.4;
+}
+
+.sel {
+  fill: rgba(22, 179, 160, 0.34);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.dim {
+  fill: rgba(234, 242, 245, 0.03);
+  stroke: rgba(143, 169, 188, 0.3);
+  stroke-width: 1.4;
+}
+
+.edge {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  pointer-events: none;
+}
+
+.photo {
+  opacity: 0;
+  transition: opacity 0.55s ease;
+  pointer-events: none;
+}
+
+.photoOn {
+  opacity: 1;
+}
+
+/* طبقة تعتيم فوق الصورة كي تبقى الأرقام والحدود مقروءة */
+.tint {
+  fill: rgba(6, 17, 28, 0.42);
+  pointer-events: none;
+  transition: opacity 0.55s ease;
+}
+
+.dot {
+  fill: var(--accent);
+  opacity: 0;
+  animation: ndot 4.2s ease-in-out infinite;
+}
+
+.dotSmall {
+  fill: #8fa9bc;
+}
+
+@keyframes ndot {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  22% {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  58% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  82% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+.pulse {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.2;
+  opacity: 0;
+  vector-effect: non-scaling-stroke;
+  animation: npulse 4.2s ease-out infinite;
+}
+
+@keyframes npulse {
+  0% {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+  24% {
+    opacity: 0.5;
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dot {
+    opacity: 0.8;
+    animation: none;
+  }
+
+  .pulse {
+    display: none;
+  }
+}
+
+/* ---------- بطاقة المحافظة المختارة ---------- */
+.tag {
+  position: absolute;
+  z-index: 6;
+  transform: translate(-50%, -50%) scale(0.92);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px 7px 14px;
+  background: rgba(6, 17, 28, 0.92);
+  border: 1px solid rgba(22, 179, 160, 0.45);
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 16px 34px -18px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.28s ease,
+    transform 0.28s ease;
+  white-space: nowrap;
+}
+
+.tagOn {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+  pointer-events: auto;
+}
+
+.tagText {
+  text-align: start;
+}
+
+.tag b {
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: block;
+}
+
+.tag small {
+  display: block;
+  font-size: 0.66rem;
+  color: var(--dim);
+  margin-top: 1px;
+}
+
+.tag a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 999px;
+  padding: 6px 13px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+}
+
+.tag a:hover {
+  transform: translateY(-1px);
+}

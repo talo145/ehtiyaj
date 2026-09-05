@@ -1,0 +1,197 @@
+/* شريط أفقي يخطو بطاقة كل 2.5 ثانية، وتحته خط تتبّع مقسّم بعدد المبادرات. */
+.viewport {
+  position: relative;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 7%,
+    #000 95%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    90deg,
+    transparent 0,
+    #000 7%,
+    #000 95%,
+    transparent 100%
+  );
+}
+
+.track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  transition: transform 0.55s cubic-bezier(0.32, 0.72, 0.28, 1);
+  will-change: transform;
+}
+
+.card {
+  width: clamp(250px, 25vw, 310px);
+  flex: 0 0 auto;
+  background: rgba(3, 9, 16, 0.66);
+  border: 1px solid rgba(234, 242, 245, 0.1);
+  border-radius: 18px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(22, 179, 160, 0.45);
+  background: rgba(4, 12, 20, 0.8);
+}
+
+.active {
+  border-color: rgba(22, 179, 160, 0.55);
+  background: rgba(5, 20, 28, 0.82);
+  box-shadow: 0 0 0 1px rgba(22, 179, 160, 0.18);
+}
+
+.card h3 {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.org {
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 0.74rem;
+  color: var(--dim);
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 11px;
+  border-top: 1px solid var(--line);
+  margin-top: auto;
+}
+
+.link {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.8rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 2px;
+}
+
+.link:hover {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.share {
+  margin-inline-start: auto;
+  display: flex;
+  gap: 6px;
+}
+
+.share button {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--dim);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.share button:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* خط التتبّع: مقطع لكل مبادرة، والمقطع الحالي أعرض وأوضح */
+.segbar {
+  display: flex;
+  gap: 5px;
+  margin-top: 20px;
+}
+
+.segbar button {
+  flex: 1 1 0;
+  height: 4px;
+  border: 0;
+  border-radius: 2px;
+  padding: 0;
+  cursor: pointer;
+  background: rgba(234, 242, 245, 0.1);
+  transition:
+    background 0.3s ease,
+    height 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.segbar button.done {
+  background: rgba(22, 179, 160, 0.42);
+}
+
+.segbar button[aria-current="true"] {
+  background: var(--accent);
+  height: 7px;
+  margin-block: -1.5px;
+  box-shadow: 0 0 12px rgba(22, 179, 160, 0.5);
+}
+
+.segbar button:hover {
+  background: rgba(234, 242, 245, 0.3);
+}
+
+.hint {
+  margin: 10px 0 0;
+  font-size: 0.74rem;
+  color: var(--dim);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewport {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .track {
+    transform: none !important;
+    transition: none;
+  }
+}
+
+@media (max-width: 1000px) {
+  .card {
+    width: min(76vw, 290px);
+  }
+}
+
+@media (max-width: 620px) {
+  .card {
+    padding: 15px;
+  }
+
+  .segbar {
+    gap: 3px;
+  }
+
+  .hint {
+    font-size: 0.72rem;
+  }
+}
