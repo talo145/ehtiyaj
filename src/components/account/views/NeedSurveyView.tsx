@@ -1,0 +1,408 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/Button";
+import {
+  contactOptions,
+  contactTimeOptions,
+  followedOptions,
+  mobilityOptions,
+  needCategoryOptions,
+  recurrenceOptions,
+  sinceOptions,
+  urgencyOptions,
+} from "@/data/need-categories";
+import { placeCount, placesByGovernorate, regions } from "@/lib/places";
+import { cn } from "@/lib/cn";
+import { useAccount } from "../AccountState";
+import { ChoiceGroup, CitySelect } from "../ChoiceGroup";
+import { categoryIcons } from "../icons";
+import { ui } from "../pieces";
+import form from "../AccountForm.module.css";
+import type { NeedSubmission } from "@/types";
+
+const titles = [
+  "نوع الاحتياج",
+  "تفاصيل الحاجة",
+  "الموقع",
+  "الوصف والإلحاح",
+  "التواصل",
+  "المراجعة والإرسال",
+];
+
+const MIN_DESCRIPTION = 20;
+
+type Draft = {
+  category: number | null;
+  subcategory: string;
+  since: string;
+  recurrence: string;
+  region: string;
+  city: string;
+  mobility: string;
+  description: string;
+  urgency: string;
+  followedByProvider: string;
+  contactMethod: string;
+  contactTime: string;
+};
+
+/** استبانة الاحتياج: ست خطوات، لا تُتجاوز خطوة قبل اكتمالها،
+ *  وتنتهي بمراجعة وإقرار لأن الاحتياج لا يقبل التعديل بعد الإرسال. */
+export function NeedSurveyView() {
+  const { profile, submitNeed, ready } = useAccount();
+  const router = useRouter();
+  const [step, setStep] = useState(0);
+  const [ack, setAck] = useState(false);
+  const [d, setD] = useState<Draft>({
+    category: null,
+    subcategory: "",
+    since: "",
+    recurrence: "",
+    region: profile.region,
+    city: profile.city,
+    mobility: "",
+    description: "",
+    urgency: "",
+    followedByProvider: "",
+    contactMethod: profile.contactMethod,
+    contactTime: "",
+  });
+
+  if (!ready) return null;
+
+  const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
+    setD((s) => ({ ...s, [key]: value }));
+
+  const complete = [
+    d.category !== null && Boolean(d.subcategory),
+    Boolean(d.since && d.recurrence),
+    Boolean(d.region && d.city && d.mobility),
+    d.description.trim().length >= MIN_DESCRIPTION &&
+      Boolean(d.urgency && d.followedByProvider),
+    Boolean(d.contactMethod && d.contactTime),
+    ack,
+  ];
+
+  function send() {
+    if (d.category === null) return;
+    submitNeed(d as unknown as NeedSubmission);
+    router.push("/account/need");
+  }
+
+  const category = d.category !== null ? needCategoryOptions[d.category] : null;
+
+  return (
+    <div className={ui.narrow}>
+      <div className={form.steps} aria-hidden="true">
+        {titles.map((t, i) => (
+          <i key={t} className={cn(i <= step && form.stepOn)} />
+        ))}
+      </div>
+
+      <span className={form.stepNo}>
+        الخطوة {step + 1} من {titles.length}
+      </span>
+      <h1 style={{ fontSize: "1.32rem", margin: "4px 0 18px" }}>
+        {titles[step]}
+      </h1>
+
+      {step === 0 ? (
+        <>
+          <p className={ui.text} style={{ marginBottom: 16 }}>
+            اختر التصنيف الأقرب لاحتياجك، ثم حدّد نوعه بدقة.
+          </p>
+
+          <div className={form.options}>
+            {needCategoryOptions.map((c) => (
+              <button
+                key={c.name}
+                type="button"
+                aria-pressed={d.category === c.index}
+                onClick={() => {
+                  set("category", c.index);
+                  set("subcategory", "");
+                }}
+                className={cn(form.option, d.category === c.index && form.on)}
+              >
+                <span className={form.mark} aria-hidden="true">
+                  {categoryIcons[c.icon]}
+                </span>
+                <span>
+                  <b>{c.name}</b>
+                  <span className={form.optionHint}>
+                    {c.subcategories.length} أنواع
+                  </span>
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {category ? (
+            <>
+              <h2 className={ui.sectionTitle}>ما نوع الاحتياج تحديدًا؟</h2>
+              <div className={form.chips}>
+                {category.subcategories.map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    aria-pressed={d.subcategory === s}
+                    onClick={() => set("subcategory", s)}
+                    className={cn(form.chip, d.subcategory === s && form.chipOn)}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+              <p className={form.hint} style={{ marginTop: 12 }}>
+                لم تجد ما يطابق حاجتك؟ اختر الأقرب واشرح التفاصيل في خطوة الوصف.
+              </p>
+            </>
+          ) : null}
+        </>
+      ) : null}
+
+      {step === 1 ? (
+        <>
+          <div className={cn(ui.card, ui.warn)} style={{ marginBottom: 20 }}>
+            <h2>هذا الاحتياج لك أنت</h2>
+            <p className={ui.text} style={{ marginTop: 8 }}>
+              لا يمكن تسجيل احتياج نيابةً عن شخص آخر. إن كنت تساعد أحد أفراد
+              أسرتك — والدك أو والدتك مثلًا — فليكن التسجيل من حسابه هو، لا من
+              حسابك.
+            </p>
+          </div>
+
+          <ChoiceGroup
+            label="منذ متى وأنت تحتاج هذا؟"
+            options={sinceOptions}
+            value={d.since}
+            onChange={(v) => set("since", v)}
+          />
+
+          <div style={{ marginTop: 22 }}>
+            <ChoiceGroup
+              label="هل الحاجة لمرة واحدة أم متكررة؟"
+              options={recurrenceOptions}
+              value={d.recurrence}
+              onChange={(v) => set("recurrence", v)}
+              columns={2}
+            />
+          </div>
+        </>
+      ) : null}
+
+      {step === 2 ? (
+        <>
+          <p className={ui.text} style={{ marginBottom: 16 }}>
+            الموقع يحدّد الجمعية التي يصلها احتياجك. عُبِّئ من ملفك، وتستطيع
+            تغييره إن كنت تحتاج الخدمة في مكان آخر.
+          </p>
+
+          <div className={form.pair}>
+            <div className={form.field}>
+              <label htmlFor="need-region">المنطقة</label>
+              <select
+                id="need-region"
+                className={form.input}
+                value={d.region}
+                onChange={(e) => {
+                  set("region", e.target.value);
+                  set("city", "");
+                }}
+              >
+                {regions.map((r) => (
+                  <option key={r}>{r}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className={form.field}>
+              <label>المدينة أو القرية</label>
+              <CitySelect
+                value={d.city}
+                onChange={(v) => set("city", v)}
+                groups={placesByGovernorate}
+                placeholder="اختر المدينة أو القرية"
+              />
+              <span className={form.hint}>
+                {placeCount} موقعًا في الحدود الشمالية — اختر الأقرب لك.
+              </span>
+            </div>
+          </div>
+
+          <div style={{ marginTop: 6 }}>
+            <ChoiceGroup
+              label="هل تستطيع الانتقال لموعد خارج المنزل؟"
+              options={mobilityOptions}
+              value={d.mobility}
+              onChange={(v) => set("mobility", v)}
+            />
+          </div>
+        </>
+      ) : null}
+
+      {step === 3 ? (
+        <>
+          <div className={form.field}>
+            <label htmlFor="desc">اشرح احتياجك بكلماتك</label>
+            <textarea
+              id="desc"
+              className={form.input}
+              placeholder="اكتب ما تحتاجه ولماذا، وأي تفصيل يساعد الجمعية على فهم حالتك."
+              value={d.description}
+              onChange={(e) => set("description", e.target.value)}
+            />
+            <span className={form.hint}>
+              {d.description.trim().length < MIN_DESCRIPTION
+                ? `اكتب ${MIN_DESCRIPTION} حرفًا على الأقل — كلما وضح الوصف كان التوجيه أدق.`
+                : `وصف كافٍ (${d.description.trim().length} حرفًا).`}
+            </span>
+          </div>
+
+          <div className={ui.card} style={{ margin: "6px 0 20px" }}>
+            <p className={ui.text}>
+              لا تكتب رقم هويتك أو أرقام حساباتك أو أي بيانات لا علاقة لها
+              بالاحتياج.
+            </p>
+          </div>
+
+          <ChoiceGroup
+            label="ما مدى إلحاح احتياجك؟"
+            options={urgencyOptions}
+            value={d.urgency}
+            onChange={(v) => set("urgency", v)}
+          />
+          <p className={form.hint} style={{ marginTop: 10 }}>
+            هذا تقديرك أنت. الأولوية النهائية تُحدَّد بعد مراجعة الاحتياج.
+          </p>
+
+          <div style={{ marginTop: 22 }}>
+            <ChoiceGroup
+              label="هل تتابع حالتك جهة صحية حاليًا؟"
+              options={followedOptions}
+              value={d.followedByProvider}
+              onChange={(v) => set("followedByProvider", v)}
+              columns={2}
+            />
+          </div>
+        </>
+      ) : null}
+
+      {step === 4 ? (
+        <>
+          <p className={ui.text} style={{ marginBottom: 16 }}>
+            تتواصل معك الجمعية عبر الوسيلة التي تختارها، على رقم جوالك المسجّل.
+          </p>
+
+          <ChoiceGroup
+            label="وسيلة التواصل المفضّلة"
+            options={contactOptions}
+            value={d.contactMethod}
+            onChange={(v) => set("contactMethod", v)}
+          />
+
+          <div style={{ marginTop: 22 }}>
+            <ChoiceGroup
+              label="الأوقات المناسبة للتواصل"
+              options={contactTimeOptions}
+              value={d.contactTime}
+              onChange={(v) => set("contactTime", v)}
+              columns={2}
+            />
+          </div>
+        </>
+      ) : null}
+
+      {step === 5 ? (
+        <>
+          <div className={ui.card}>
+            <h2>راجع احتياجك قبل الإرسال</h2>
+            <p className={ui.sub}>بعد الإرسال لا يمكن تعديل الاحتياج.</p>
+
+            <dl className={ui.kv} style={{ marginTop: 12 }}>
+              {(
+                [
+                  ["التصنيف", category?.name],
+                  ["النوع", d.subcategory],
+                  ["منذ متى", d.since],
+                  ["طبيعة الحاجة", d.recurrence],
+                  ["الموقع", `${d.city} · ${d.region}`],
+                  ["التنقّل", d.mobility],
+                  ["مدى الإلحاح", d.urgency],
+                  ["جهة تتابع حالتك", d.followedByProvider],
+                  ["وسيلة التواصل", d.contactMethod],
+                  ["وقت التواصل", d.contactTime],
+                ] as [string, string | undefined][]
+              ).map(([k, v]) => (
+                <div key={k}>
+                  <dt>{k}</dt>
+                  <dd>{v || "—"}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <div className={form.field} style={{ marginTop: 14 }}>
+              <label>الوصف</label>
+              <p
+                className={ui.text}
+                style={{
+                  border: "1px solid var(--line)",
+                  borderRadius: 12,
+                  padding: 13,
+                  background: "rgba(4,9,15,.4)",
+                }}
+              >
+                {d.description || "—"}
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            aria-pressed={ack}
+            onClick={() => setAck((v) => !v)}
+            className={cn(form.ack, ack && form.on)}
+            style={{ marginTop: 16 }}
+          >
+            <span className={form.box} aria-hidden="true">
+              {ack ? "✓" : ""}
+            </span>
+            <p>
+              أقرّ بأن هذا الاحتياج يخصّني أنا، وأن البيانات صحيحة، وأنه لا يمكن
+              تعديل الاحتياج بعد إرساله.
+            </p>
+          </button>
+        </>
+      ) : null}
+
+      <div className={form.actions}>
+        {step > 0 ? (
+          <Button variant="outline" onClick={() => setStep((s) => s - 1)}>
+            السابق
+          </Button>
+        ) : (
+          <Button href="/account" variant="ghost">
+            إلغاء
+          </Button>
+        )}
+
+        {step === titles.length - 1 ? (
+          <Button variant="cta" withArrow disabled={!complete[step]} onClick={send}>
+            إرسال الاحتياج
+          </Button>
+        ) : (
+          <Button
+            variant="cta"
+            withArrow
+            disabled={!complete[step]}
+            onClick={() => setStep((s) => s + 1)}
+          >
+            التالي
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans_Arabic, IBM_Plex_Mono } from "next/font/google";
-import { SiteHeader } from "@/components/layout/SiteHeader";
-import { SiteFooter } from "@/components/layout/SiteFooter";
-import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { site } from "@/data/site";
 import "./globals.css";
 
@@ -57,12 +54,7 @@ export default function RootLayout({
       dir="rtl"
       className={`${plexArabic.variable} ${plexMono.variable}`}
     >
-      <body>
-        <SiteHeader />
-        <main id="content">{children}</main>
-        <SiteFooter />
-        <WhatsAppButton />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

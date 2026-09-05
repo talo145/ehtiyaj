@@ -1,0 +1,499 @@
+/* عناصر متكرّرة داخل حساب المستفيد. */
+
+.card {
+  background: rgba(234, 242, 245, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 20px;
+}
+
+.accent {
+  background: linear-gradient(
+    150deg,
+    rgba(22, 179, 160, 0.12),
+    rgba(4, 11, 18, 0.4)
+  );
+  border-color: rgba(22, 179, 160, 0.3);
+}
+
+.warn {
+  background: rgba(240, 162, 114, 0.07);
+  border-color: rgba(240, 162, 114, 0.3);
+}
+
+.danger {
+  border-color: rgba(227, 121, 107, 0.3);
+}
+
+.card h2,
+.card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.sub {
+  color: var(--dim);
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.text {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.65fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.narrow {
+  max-width: 660px;
+}
+
+.sectionTitle {
+  font-size: 1.02rem;
+  font-weight: 600;
+  margin: 26px 0 12px;
+}
+
+/* ================= ترويسة الصفحة ================= */
+.head {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.head h1 {
+  font-size: 1.42rem;
+  letter-spacing: -0.02em;
+}
+
+.push {
+  margin-inline-start: auto;
+}
+
+/* على الجوال يقوم الزر العائم بالدور نفسه، فلا يتكرّر الإجراء في الترويسة. */
+.wideOnly {
+  display: block;
+}
+
+/* ================= وسم الحالة ================= */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  width: fit-content;
+}
+
+.badge i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  flex: 0 0 auto;
+}
+
+.review {
+  color: #f0a272;
+  border-color: rgba(240, 162, 114, 0.4);
+  background: rgba(240, 162, 114, 0.1);
+}
+
+.live {
+  color: var(--accent);
+  border-color: rgba(22, 179, 160, 0.45);
+  background: rgba(22, 179, 160, 0.11);
+}
+
+.done {
+  color: var(--dim);
+  background: rgba(234, 242, 245, 0.05);
+}
+
+/* ================= جدول بيانات ================= */
+.kv {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.kv > div {
+  display: flex;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid rgba(234, 242, 245, 0.07);
+  font-size: 0.88rem;
+}
+
+.kv > div:last-child {
+  border-bottom: 0;
+}
+
+.kv dt {
+  color: var(--dim);
+  flex: 0 0 44%;
+  margin: 0;
+}
+
+.kv dd {
+  margin: 0;
+}
+
+/* ================= مسار الاحتياج ================= */
+.track {
+  display: flex;
+  flex-direction: column;
+}
+
+.step {
+  display: flex;
+  gap: 13px;
+  padding-bottom: 16px;
+  position: relative;
+}
+
+.step:last-child {
+  padding-bottom: 0;
+}
+
+.step::before {
+  content: "";
+  position: absolute;
+  inset-inline-end: 6px;
+  top: 18px;
+  bottom: 0;
+  width: 1px;
+  background: var(--line);
+}
+
+.step:last-child::before {
+  display: none;
+}
+
+.knob {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  margin-top: 5px;
+  background: #0a1722;
+  border: 2px solid rgba(143, 169, 188, 0.35);
+  position: relative;
+  z-index: 1;
+}
+
+.passed .knob {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.current .knob {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 5px rgba(22, 179, 160, 0.15);
+}
+
+.step b {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.pending b {
+  color: var(--dim);
+}
+
+.when {
+  display: block;
+  font-size: 0.77rem;
+  color: var(--dim);
+  margin-top: 2px;
+}
+
+.note {
+  display: block;
+  font-size: 0.83rem;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.7;
+}
+
+/* ================= الجمعية ================= */
+.org {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.orgMark {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: linear-gradient(
+    160deg,
+    rgba(22, 179, 160, 0.3),
+    rgba(14, 43, 69, 0.65)
+  );
+  border: 1px solid rgba(22, 179, 160, 0.32);
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.org b {
+  display: block;
+  font-size: 0.94rem;
+  font-weight: 600;
+}
+
+.org span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--dim);
+}
+
+/* ================= السجل والإشعارات ================= */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(234, 242, 245, 0.03);
+}
+
+.row b {
+  font-size: 0.92rem;
+  font-weight: 600;
+  display: block;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: 0.77rem;
+  color: var(--dim);
+  margin-top: 3px;
+}
+
+.rowBadge {
+  margin-inline-start: auto;
+}
+
+.note-i {
+  display: flex;
+  gap: 12px;
+  padding: 14px 15px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(234, 242, 245, 0.03);
+}
+
+.unread {
+  border-color: rgba(22, 179, 160, 0.35);
+  background: rgba(22, 179, 160, 0.06);
+}
+
+.noteIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: rgba(22, 179, 160, 0.13);
+  color: var(--accent);
+}
+
+.note-i b {
+  display: block;
+  font-size: 0.89rem;
+  font-weight: 600;
+}
+
+.note-i p {
+  font-size: 0.83rem;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.7;
+}
+
+/* ================= الحالة الفارغة ================= */
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 13px;
+  padding: 38px 22px;
+  border: 1px dashed var(--line);
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba(22, 179, 160, 0.06), transparent 70%);
+}
+
+.emptyIcon {
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  background: rgba(22, 179, 160, 0.12);
+  border: 1px solid rgba(22, 179, 160, 0.32);
+  color: var(--accent);
+}
+
+.empty h2 {
+  font-size: 1.25rem;
+}
+
+.empty p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.8;
+  max-width: 42ch;
+}
+
+/* ================= تقدّم إكمال البيانات ================= */
+.progress {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(234, 242, 245, 0.1);
+  overflow: hidden;
+}
+
+.progress i {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.check {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 14px;
+}
+
+.check div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.86rem;
+  color: var(--muted);
+}
+
+.tick {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  font-size: 0.7rem;
+}
+
+.tickOn {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+/* ================= قائمة حسابي في الجوال ================= */
+.menu {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(234, 242, 245, 0.03);
+}
+
+.menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 16px;
+  border-bottom: 1px solid rgba(234, 242, 245, 0.07);
+  color: var(--text);
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+
+.menu a:last-child {
+  border-bottom: 0;
+}
+
+.menu a:hover {
+  background: rgba(234, 242, 245, 0.04);
+}
+
+.menuIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(22, 179, 160, 0.12);
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.menuGo {
+  margin-inline-start: auto;
+  color: var(--dim);
+}
+
+@media (max-width: 1000px) {
+  .wideOnly {
+    display: none;
+  }
+
+  .head h1 {
+    font-size: 1.24rem;
+  }
+
+  .cols {
+    grid-template-columns: 1fr;
+  }
+
+  .rowBadge {
+    margin-inline-start: 0;
+  }
+
+  .row {
+    flex-wrap: wrap;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress i {
+    transition: none;
+  }
+}

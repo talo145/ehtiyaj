@@ -136,3 +136,82 @@ export interface NeedTotals {
   places: number;
   highPriority: number;
 }
+
+/* ================= حساب المستفيد ================= */
+
+/** حالات الاحتياج الست كما تظهر للمستفيد. */
+export type NeedStatus =
+  | "new"
+  | "review"
+  | "processing"
+  | "responded"
+  | "withdrawn"
+  | "closed";
+
+/** حدث في مسار الاحتياج — يُنشأ عند كل تغيّر حالة ولا يُعدَّل بعدها. */
+export interface NeedEvent {
+  status: NeedStatus;
+  title: string;
+  at: string;
+  note?: string;
+}
+
+/** ما يسجّله المستفيد في الاستبانة. لا يقبل التعديل بعد الإرسال (القسم 25). */
+export interface NeedSubmission {
+  category: number;
+  subcategory: string;
+  since: string;
+  recurrence: string;
+  region: string;
+  city: string;
+  mobility: string;
+  description: string;
+  urgency: string;
+  followedByProvider: string;
+  contactMethod: string;
+  contactTime: string;
+}
+
+export interface BeneficiaryNeed extends NeedSubmission {
+  id: string;
+  status: NeedStatus;
+  statusLabel: string;
+  submittedAt: string;
+  /** تُحدَّد بعد المراجعة، لا يختارها المستفيد. */
+  priority?: string;
+  /** تظهر للمستفيد بعد بدء المعالجة فقط. */
+  association?: { name: string; initial: string; city: string };
+  events: NeedEvent[];
+}
+
+/** سطر في سجل المستفيد — يبقى بعد الإغلاق ولا يُحذف. */
+export interface NeedRecord {
+  id: string;
+  title: string;
+  category: string;
+  status: NeedStatus;
+  statusLabel: string;
+  closedAt: string;
+  association?: string;
+}
+
+export interface BeneficiaryNotification {
+  id: string;
+  title: string;
+  body: string;
+  at: string;
+  unread: boolean;
+}
+
+/** بيانات الملف التي يُشترط اكتمالها قبل تسجيل أي احتياج (القسم 4). */
+export interface BeneficiaryProfile {
+  name: string;
+  email: string;
+  phone: string;
+  phoneVerified: boolean;
+  region: string;
+  city: string;
+  birthYear: string;
+  gender: string;
+  contactMethod: string;
+}

@@ -1,0 +1,326 @@
+/* حقول واختيارات نماذج حساب المستفيد: إكمال البيانات واستبانة الاحتياج. */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+
+.field > label {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.hint {
+  font-size: 0.77rem;
+  color: var(--dim);
+}
+
+.input {
+  width: 100%;
+  background: rgba(4, 9, 15, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.92rem;
+  color: var(--text);
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--accent);
+  background: rgba(4, 9, 15, 0.8);
+}
+
+.input::placeholder {
+  color: var(--dim);
+}
+
+.input:disabled {
+  opacity: 0.55;
+}
+
+textarea.input {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.8;
+}
+
+select.input {
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position:
+    left 18px top 55%,
+    left 13px top 55%;
+  background-size:
+    5px 5px,
+    5px 5px;
+  background-repeat: no-repeat;
+}
+
+.ltr {
+  direction: ltr;
+  text-align: start;
+}
+
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 14px;
+}
+
+/* رمز التحقق */
+.otp {
+  display: flex;
+  gap: 8px;
+  direction: ltr;
+}
+
+.otp input {
+  width: 46px;
+  height: 52px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  background: rgba(4, 9, 15, 0.55);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--text);
+}
+
+.otp input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+/* اختيار من قائمة */
+.options {
+  display: grid;
+  gap: 10px;
+}
+
+.two {
+  grid-template-columns: 1fr 1fr;
+}
+
+.option {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  text-align: start;
+  padding: 14px 15px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(234, 242, 245, 0.03);
+  cursor: pointer;
+  width: 100%;
+  color: inherit;
+  transition:
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.option:hover {
+  border-color: rgba(22, 179, 160, 0.4);
+}
+
+.on {
+  border-color: var(--accent);
+  background: rgba(22, 179, 160, 0.1);
+}
+
+.radio {
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  flex: 0 0 auto;
+  margin-top: 3px;
+  display: grid;
+  place-items: center;
+}
+
+.on .radio {
+  border-color: var(--accent);
+}
+
+.on .radio::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+.option b {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.option span:last-child {
+  display: block;
+}
+
+.optionHint {
+  display: block;
+  font-size: 0.79rem;
+  color: var(--dim);
+  margin-top: 2px;
+  line-height: 1.6;
+}
+
+.mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  background: rgba(22, 179, 160, 0.12);
+  color: var(--accent);
+  border: 1px solid rgba(22, 179, 160, 0.22);
+}
+
+/* شرائح التصنيف الفرعي */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  background: rgba(234, 242, 245, 0.03);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.84rem;
+  cursor: pointer;
+  color: var(--muted);
+  transition:
+    color 0.18s ease,
+    border-color 0.18s ease,
+    background 0.18s ease;
+}
+
+.chip:hover {
+  color: var(--text);
+  border-color: var(--muted);
+}
+
+.chipOn {
+  background: rgba(22, 179, 160, 0.14);
+  border-color: var(--accent);
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* مؤشّر الخطوات */
+.steps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.steps i {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(234, 242, 245, 0.12);
+  flex: 1 1 0;
+}
+
+.stepOn {
+  background: var(--accent) !important;
+}
+
+.stepNo {
+  font-size: 0.77rem;
+  color: var(--dim);
+  display: block;
+}
+
+.groupLabel {
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* الإقرار */
+.ack {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(234, 242, 245, 0.03);
+  cursor: pointer;
+  width: 100%;
+  text-align: start;
+  color: inherit;
+}
+
+.box {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 1.5px solid var(--line);
+  flex: 0 0 auto;
+  margin-top: 2px;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+}
+
+.ack.on .box {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.ack p {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.8;
+}
+
+/* شريط الإجراءات — يلتصق بأسفل الشاشة على الجوال فوق الشريط السفلي */
+.actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.actions > :last-child {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 1000px) {
+  .pair,
+  .two {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    position: sticky;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+    padding: 12px 0;
+    background: linear-gradient(180deg, transparent, #050b12 38%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .input,
+  .option,
+  .chip {
+    transition: none;
+  }
+}
