@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+build/
+.env*
+!.env.example
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+# استعلام الإعداد يحوي كلمة مرور مولّدة
+.db-setup.sql

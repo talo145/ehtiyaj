@@ -1,0 +1,307 @@
+.about {
+  position: relative;
+  padding-block: clamp(84px, 11vh, 130px);
+}
+
+.inner {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 34px 0 74px;
+}
+
+.top {
+  display: grid;
+  grid-template-columns: 1.08fr 0.92fr;
+  gap: 52px;
+  align-items: center;
+}
+
+/* عنوان هذا القسم وحده يبقى محاذيًا لبداية السطر، لا في المنتصف */
+.copy h2 {
+  font-size: clamp(2.4rem, 5.2vw, 3.8rem);
+  letter-spacing: -0.03em;
+}
+
+.lead {
+  margin: 14px 0 0;
+  font-size: 1.02rem;
+  line-height: 1.8;
+  color: var(--muted);
+  max-width: 46ch;
+}
+
+.facts {
+  display: grid;
+  gap: 13px;
+  margin-top: 24px;
+  max-width: 50ch;
+}
+
+.fact {
+  border-inline-start: 2px solid rgba(22, 179, 160, 0.4);
+  padding-inline-start: 14px;
+}
+
+.fact b {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.fact p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ---------- الرسمة المرافقة للمرحلة ---------- */
+.art {
+  position: relative;
+  height: clamp(210px, 30vh, 290px);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background:
+    radial-gradient(
+      70% 70% at 50% 40%,
+      rgba(22, 179, 160, 0.1),
+      transparent 70%
+    ),
+    rgba(234, 242, 245, 0.03);
+  overflow: hidden;
+}
+
+.art figure {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  opacity: 0;
+  transform: translateY(10px) scale(0.97);
+  transition:
+    opacity 0.5s ease,
+    transform 0.6s cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+.art figure.on {
+  opacity: 1;
+  transform: none;
+}
+
+.art svg {
+  width: min(86%, 320px);
+  height: auto;
+  display: block;
+}
+
+.art::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  box-shadow: inset 0 0 0 1px rgba(234, 242, 245, 0.08);
+  border-radius: 20px;
+}
+
+.artTag {
+  position: absolute;
+  bottom: 14px;
+  right: 16px;
+  z-index: 4;
+  font-size: 0.72rem;
+  color: var(--dim);
+  letter-spacing: 0.1em;
+}
+
+/* ---------- شريط المسار ---------- */
+.flow {
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.flowLabel {
+  font-size: 0.8rem;
+  color: var(--dim);
+  margin: 0 0 20px;
+}
+
+.track {
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.line {
+  position: absolute;
+  top: 7px;
+  height: 1px;
+  background: var(--line);
+  right: 0;
+  width: 100%;
+}
+
+.fill {
+  position: absolute;
+  top: 6px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  right: 0;
+  width: 0;
+  transition: width 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 14px rgba(22, 179, 160, 0.5);
+}
+
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.steps button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: inherit;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.knob {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #0a1722;
+  border: 2px solid rgba(143, 169, 188, 0.4);
+  transition:
+    border-color 0.35s ease,
+    background 0.35s ease,
+    transform 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+.name {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--dim);
+  transition: color 0.35s ease;
+}
+
+/* النقاط التي مرّ بها المسار تُملأ بالكامل ويمرّ الخط من خلالها */
+.steps [data-done="true"] .knob {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.steps [data-done="true"] .name {
+  color: var(--muted);
+}
+
+.steps [aria-current="true"] .knob {
+  border-color: var(--accent);
+  background: var(--accent);
+  transform: scale(1.25);
+  box-shadow: 0 0 0 6px rgba(22, 179, 160, 0.15);
+}
+
+.steps [aria-current="true"] .name {
+  color: var(--text);
+}
+
+.caption {
+  margin-top: 20px;
+  min-height: 70px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  transition:
+    opacity 0.26s ease,
+    transform 0.26s ease;
+}
+
+.caption.out {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.idx {
+  font-size: 0.72rem;
+  color: var(--accent);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 3px 7px;
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.caption b {
+  display: block;
+  font-size: 1.02rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.caption p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.75;
+  max-width: 78ch;
+}
+
+@media (max-width: 1000px) {
+  .inner {
+    padding: 0 20px;
+  }
+
+  .top {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .name {
+    font-size: 0.76rem;
+  }
+
+  .art {
+    height: 200px;
+  }
+}
+
+@media (max-width: 640px) {
+  .inner {
+    padding-inline: 16px;
+  }
+
+  .copy h2 {
+    font-size: clamp(1.9rem, 9vw, 2.4rem);
+  }
+
+  .lead {
+    font-size: 0.94rem;
+  }
+
+  .name {
+    font-size: 0.68rem;
+  }
+
+  .caption p {
+    font-size: 0.88rem;
+  }
+
+  .art {
+    height: 170px;
+  }
+}

@@ -1,0 +1,224 @@
+.hero {
+  display: flex;
+  gap: 26px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 0 0 8px;
+}
+
+.main {
+  flex: 1 1 380px;
+  min-width: 0;
+}
+
+.main h1 {
+  font-size: clamp(1.7rem, 3.6vw, 2.5rem);
+}
+
+.place {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.94rem;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+.tag {
+  font-size: 0.72rem;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 4px 11px;
+}
+
+/* ختم الاعتماد: ثلثا دائرة حول علامة صح، والنص تحته وأصغر من الشعار */
+.verified {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  align-self: center;
+}
+
+.verified span {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.logo {
+  width: 92px;
+  height: 92px;
+  border-radius: 26px;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  background: linear-gradient(
+    160deg,
+    rgba(22, 179, 160, 0.3),
+    rgba(14, 43, 69, 0.65)
+  );
+  border: 1px solid rgba(22, 179, 160, 0.32);
+  font-weight: 700;
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.stats {
+  grid-template-columns: repeat(3, 1fr);
+  margin-top: 26px;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 20px;
+  margin-top: 22px;
+  align-items: start;
+}
+
+.kv {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+
+.kv > div {
+  display: flex;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.88rem;
+}
+
+.kv > div:last-child {
+  border-bottom: 0;
+}
+
+.kv dt {
+  color: var(--dim);
+  flex: 0 0 42%;
+  margin: 0;
+}
+
+.kv dd {
+  margin: 0;
+  color: var(--text);
+}
+
+/* قنوات التواصل */
+.channels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.channels a {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 10px 15px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 600;
+  background: rgba(234, 242, 245, 0.03);
+  transition:
+    color 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.channels a:hover {
+  color: var(--text);
+  border-color: rgba(22, 179, 160, 0.45);
+  background: rgba(22, 179, 160, 0.08);
+  transform: translateY(-2px);
+}
+
+.channels i {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  color: var(--accent);
+}
+
+/* بطاقة الموقع */
+.mapRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.mapRow p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.mapRow a {
+  margin-inline-start: auto;
+}
+
+.initiativesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1000px) {
+  .cols {
+    grid-template-columns: 1fr;
+  }
+
+  .initiativesGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+
+  .stats > div {
+    border-inline-start: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .stats > div:first-child {
+    border-top: 0;
+  }
+
+  .logo {
+    width: 72px;
+    height: 72px;
+    border-radius: 22px;
+    font-size: 1.6rem;
+  }
+
+  .initiativesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mapRow a {
+    margin-inline-start: 0;
+    width: 100%;
+  }
+}

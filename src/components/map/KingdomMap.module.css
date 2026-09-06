@@ -1,0 +1,144 @@
+/* خريطة المملكة في قسم البطل: تظهر كاملة ثم تقرّب على منطقة الحدود الشمالية. */
+.host {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* تلاشٍ سفلي كي لا يظهر خط فاصل بين الخريطة والقسم التالي عند التقريب */
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0,
+    #000 58%,
+    rgba(0, 0, 0, 0.55) 82%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    180deg,
+    #000 0,
+    #000 58%,
+    rgba(0, 0, 0, 0.55) 82%,
+    transparent 100%
+  );
+}
+
+.host svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.region {
+  fill: var(--map-fill);
+  stroke: var(--map-line);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: opacity 0.9s ease;
+}
+
+.nb {
+  fill: var(--nb-fill);
+  stroke: var(--accent);
+  stroke-width: 1.6;
+}
+
+.outline {
+  fill: none;
+  stroke: var(--map-edge);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+  transition: opacity 0.9s ease;
+}
+
+.city {
+  fill: var(--muted);
+  opacity: 0.5;
+  transition: opacity 0.8s ease;
+}
+
+.cityOn {
+  fill: var(--accent);
+  opacity: 1;
+}
+
+.halo {
+  fill: var(--accent);
+  opacity: 0.18;
+}
+
+.govs {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.gov {
+  fill: rgba(22, 179, 160, 0.05);
+  stroke: rgba(22, 179, 160, 0.55);
+  stroke-width: 1;
+  opacity: 0.9;
+  vector-effect: non-scaling-stroke;
+}
+
+.nbLine {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.6;
+  stroke-linejoin: round;
+  opacity: 0;
+}
+
+/* حالة ما بعد التقريب: تظهر المحافظات ويخفت ما عداها */
+.zoomed .nbLine,
+.zoomed .govs {
+  opacity: 1;
+}
+
+.zoomed .region:not(.nb) {
+  opacity: 0.3;
+}
+
+.zoomed .outline {
+  opacity: 0.4;
+}
+
+.zoomed .city:not(.cityOn) {
+  opacity: 0;
+}
+
+.govs path:nth-child(1) {
+  transition: opacity 0.6s ease 0.05s;
+}
+.govs path:nth-child(2) {
+  transition: opacity 0.6s ease 0.18s;
+}
+.govs path:nth-child(3) {
+  transition: opacity 0.6s ease 0.31s;
+}
+.govs path:nth-child(4) {
+  transition: opacity 0.6s ease 0.44s;
+}
+
+@media (max-width: 1000px) {
+  /* على الجوال تنزل الخريطة أسفل النص كعنصر مستقل لا كخلفية باهتة */
+  .host {
+    position: relative;
+    inset: auto;
+    order: 2;
+    width: 100%;
+    height: min(36vh, 340px);
+    min-height: 210px;
+    margin-top: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .host {
+    -webkit-mask-image: linear-gradient(
+      180deg,
+      #000 0,
+      #000 66%,
+      transparent 100%
+    );
+    mask-image: linear-gradient(180deg, #000 0, #000 66%, transparent 100%);
+  }
+}

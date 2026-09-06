@@ -1,0 +1,154 @@
+/* نصفان: النموذج على جانب ولوحة الخطاب على الآخر.
+   خلفية الموقع وحدها تمرّ خلف الاثنين — لا طبقة إضافية. */
+.split {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  min-height: calc(100vh - var(--nav-h));
+}
+
+.pane {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(28px, 5vw, 64px);
+  border-inline-start: 1px solid var(--line);
+}
+
+.form {
+  width: 100%;
+  max-width: 440px;
+  margin-inline: auto;
+}
+
+.wide {
+  max-width: 520px;
+}
+
+.aside {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(28px, 5vw, 64px);
+}
+
+.asideIn {
+  max-width: 420px;
+}
+
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  background: rgba(22, 179, 160, 0.12);
+  border: 1px solid rgba(22, 179, 160, 0.34);
+  border-radius: 999px;
+  padding: 5px 13px;
+}
+
+.aside h2 {
+  font-size: clamp(1.5rem, 2.8vw, 2.15rem);
+  margin-top: 18px;
+  letter-spacing: -0.03em;
+}
+
+.aside p {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.85;
+}
+
+.points {
+  margin: 24px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.points li {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.points svg {
+  flex: 0 0 auto;
+  color: var(--accent);
+  margin-top: 3px;
+}
+
+.nums {
+  display: flex;
+  gap: 30px;
+  margin-top: 26px;
+  flex-wrap: wrap;
+}
+
+.nums b {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.nums span {
+  font-size: 0.78rem;
+  color: var(--dim);
+}
+
+.head {
+  margin-bottom: 24px;
+}
+
+.head h1 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.03em;
+  margin-top: 16px;
+}
+
+.head p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.8;
+}
+
+.footLink {
+  margin: 22px 0 0;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.footLink a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 980px) {
+  .split {
+    grid-template-columns: 1fr;
+  }
+
+  .aside {
+    order: 2;
+    border-top: 1px solid var(--line);
+    padding-block: 40px;
+  }
+
+  .pane {
+    border-inline-start: 0;
+    padding-block: 40px;
+  }
+}
