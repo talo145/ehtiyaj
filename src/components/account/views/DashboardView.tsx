@@ -15,6 +15,7 @@ import {
   NeedTimeline,
   NotificationRows,
   StatusBadge,
+  needTitle,
   ui,
 } from "../pieces";
 
@@ -127,7 +128,7 @@ export function DashboardView() {
               </span>
             </div>
             <h2 style={{ marginTop: 12, fontSize: "1.16rem" }}>
-              {current.subcategory}
+              {needTitle(current.subcategory, current.categoryId)}
             </h2>
             <div className={ui.meta}>
               <span>{needCategoryOptions[current.categoryId]?.name}</span>

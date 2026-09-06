@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:push": "node --env-file=.env.local node_modules/drizzle-kit/bin.cjs push",
+    "db:push": "node --env-file=.env.local node_modules/drizzle-kit/bin.cjs push --force",
     "db:studio": "node --env-file=.env.local node_modules/drizzle-kit/bin.cjs studio",
-    "db:seed": "node --env-file=.env.local --import tsx src/server/db/seed.ts"
+    "db:seed": "node --env-file=.env.local --import tsx src/server/db/seed.ts",
+    "db:generate": "node --env-file=.env.local node_modules/drizzle-kit/bin.cjs generate",
+    "db:migrate": "node --env-file=.env.local node_modules/drizzle-kit/bin.cjs migrate"
   },
   "dependencies": {
     "drizzle-orm": "^0.45.2",

@@ -11,6 +11,7 @@ import {
   NeedFacts,
   NeedTimeline,
   StatusBadge,
+  needTitle,
   ui,
 } from "../pieces";
 import shell from "../AccountShell.module.css";
@@ -63,7 +64,9 @@ export function NeedView() {
       <div className={ui.cols}>
         <div className={ui.stack}>
           <div className={ui.card}>
-            <h2 style={{ fontSize: "1.2rem" }}>{current.subcategory}</h2>
+            <h2 style={{ fontSize: "1.2rem" }}>
+              {needTitle(current.subcategory, current.categoryId)}
+            </h2>
             <p className={ui.text} style={{ marginTop: 10 }}>
               {current.description}
             </p>

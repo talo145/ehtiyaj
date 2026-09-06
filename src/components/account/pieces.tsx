@@ -108,11 +108,13 @@ const priorityLabels = {
   low: "منخفضة",
 } as const;
 
+export { needTitle };
+
 export function NeedFacts({ need }: { need: NeedView }) {
   const rows: [string, string][] = [
     ["رقم الاحتياج", need.reference],
     ["التصنيف", needCategoryOptions[need.categoryId]?.name ?? "—"],
-    ["التصنيف الفرعي", need.subcategory],
+    ["التصنيف الفرعي", need.subcategory || "—"],
     ["الموقع", `${need.city} · ${need.region}`],
     ["منذ متى", labelOf(sinceOptions, need.since)],
     ["طبيعة الحاجة", labelOf(recurrenceOptions, need.recurrence)],
@@ -136,13 +138,18 @@ export function NeedFacts({ need }: { need: NeedView }) {
   );
 }
 
+/** التصنيف الفرعي اختياري في قاعدة البيانات، فيسقط العنوان إلى اسم التصنيف. */
+function needTitle(subcategory: string, categoryId: number) {
+  return subcategory || (needCategoryOptions[categoryId]?.name ?? "احتياج");
+}
+
 export function HistoryRows({ items }: { items: HistoryItemView[] }) {
   return (
     <div className={styles.stack}>
       {items.map((h) => (
         <div key={h.id} className={styles.row}>
           <div>
-            <b>{h.title}</b>
+            <b>{needTitle(h.title, h.categoryId)}</b>
             <div className={styles.meta}>
               <span>{needCategoryOptions[h.categoryId]?.name}</span>
               <span>{formatHijri(h.closedAt)}</span>
