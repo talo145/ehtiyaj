@@ -84,6 +84,26 @@ export function SiteFooter() {
           <span>
             © {new Date().getFullYear()} {site.name} — جميع الحقوق محفوظة
           </span>
+          {/* رخصة ODbL تُلزم بذكر مصدر الحدود والمواقع. */}
+          <span className={styles.credit}>
+            حدود المناطق والمواقع من{" "}
+            <a
+              href="https://www.geoboundaries.org"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              geoBoundaries
+            </a>{" "}
+            و{" "}
+            <a
+              href="https://www.openstreetmap.org/copyright"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              OpenStreetMap
+            </a>{" "}
+            · ODbL
+          </span>
           <span className={`${styles.demo} mono`}>DEMO DATA</span>
         </div>
       </div>

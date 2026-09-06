@@ -74,6 +74,21 @@
   color: var(--dim);
 }
 
+.credit {
+  color: var(--dim);
+}
+
+.credit a {
+  color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.credit a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
 .demo {
   margin-inline-start: auto;
 }
