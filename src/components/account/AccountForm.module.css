@@ -318,11 +318,18 @@ select.input {
     grid-template-columns: 1fr;
   }
 
+  /* شاشات التدفّق تُخفي الشريط السفلي، فيلتصق شريط الإجراءات بأسفل الشاشة
+     كما في النموذج: خلفية صلبة وحدّ علوي، لا تدرّج شفاف. */
   .actions {
-    position: sticky;
-    bottom: calc(72px + env(safe-area-inset-bottom, 0px));
-    padding: 12px 0;
-    background: linear-gradient(180deg, transparent, #050b12 38%);
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 45;
+    margin-top: 0;
+    padding: 14px 16px calc(18px + env(safe-area-inset-bottom, 0px));
+    background: rgba(5, 11, 18, 0.96);
+    backdrop-filter: blur(16px);
+    border-top: 1px solid var(--line);
   }
 }
 

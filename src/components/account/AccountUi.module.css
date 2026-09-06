@@ -475,8 +475,18 @@
     display: none;
   }
 
+  /* العنوان يظهر في شريط الجوال العلوي، فلا يتكرّر في الصفحة.
+     وإن لم يبقَ في الترويسة سواه اختفت الترويسة كلها بهامشها. */
   .head h1 {
-    font-size: 1.24rem;
+    display: none;
+  }
+
+  .head:has(h1:only-child) {
+    display: none;
+  }
+
+  .head {
+    margin-bottom: 16px;
   }
 
   .cols {

@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/Button";
 import { logout } from "@/server/actions/auth";
 import { cn } from "@/lib/cn";
 import { useAccount } from "./AccountState";
+import { StatusBadge } from "./pieces";
 import {
   AccountMark,
+  BackIcon,
   BellIcon,
   ClockIcon,
   DocIcon,
@@ -40,6 +42,30 @@ const accountNav = [
   { href: "/account/privacy", label: "بياناتي وخصوصيتي", Icon: ShieldIcon },
 ];
 
+/** عنوان كل شاشة كما يظهر في شريط الجوال العلوي. */
+const titles: Record<string, string> = {
+  "/account": "لوحتي",
+  "/account/need": "احتياجي",
+  "/account/history": "سجل احتياجاتي",
+  "/account/notifications": "الإشعارات",
+  "/account/me": "حسابي",
+  "/account/profile": "الملف الشخصي",
+  "/account/privacy": "بياناتي وخصوصيتي",
+  "/account/complete": "إكمال بياناتي",
+  "/account/new-need": "استبانة الاحتياج",
+};
+
+/** الشاشات الفرعية وأين يعود منها زر الرجوع. */
+const parents: Record<string, string> = {
+  "/account/profile": "/account/me",
+  "/account/privacy": "/account/me",
+  "/account/complete": "/account",
+  "/account/new-need": "/account",
+};
+
+/** شاشات التدفّق: تُخفي الشريط السفلي وتضع أزرارها في شريط ثابت أسفل الشاشة. */
+const flowScreens = new Set(["/account/complete", "/account/new-need"]);
+
 type Gate = "blocked" | "incomplete" | null;
 
 const NewNeedContext = createContext<(() => void) | null>(null);
@@ -57,15 +83,25 @@ function isActive(pathname: string, href: string) {
 }
 
 export function AccountShell({ children }: { children: React.ReactNode }) {
-  const { user, profile, profileComplete, hasOpenNeed, history, unreadCount } =
-    useAccount();
+  const {
+    user,
+    profile,
+    profileComplete,
+    hasOpenNeed,
+    history,
+    unreadCount,
+    current,
+  } = useAccount();
   const pathname = usePathname();
   const router = useRouter();
   const [gate, setGate] = useState<Gate>(null);
 
   const unread = unreadCount;
+  const isFlow = flowScreens.has(pathname);
+  const parent = parents[pathname];
   /** الزر العائم لا يظهر قبل أول احتياج — بطاقة اللوحة تكفي حينها. */
-  const showFab = profileComplete && (hasOpenNeed || history.length > 0);
+  const showFab =
+    !isFlow && profileComplete && (hasOpenNeed || history.length > 0);
 
   function requestNewNeed() {
     if (!profileComplete) return setGate("incomplete");
@@ -112,6 +148,24 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
               <SignOutIcon />
             </button>
           </form>
+        </header>
+
+        <header className={styles.mtop}>
+          {parent ? (
+            <Link
+              href={parent}
+              className={styles.back}
+              aria-label="رجوع"
+            >
+              <BackIcon />
+            </Link>
+          ) : null}
+          <h2>{titles[pathname] ?? "حسابي"}</h2>
+          {pathname === "/account" && current ? (
+            <span className={styles.mtopBadge}>
+              <StatusBadge status={current.status} />
+            </span>
+          ) : null}
         </header>
 
         <div className={styles.shell}>
@@ -171,7 +225,10 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
           </button>
         ) : null}
 
-        <nav className={styles.bottom} aria-label="التنقل السريع">
+        <nav
+          className={cn(styles.bottom, isFlow && styles.hidden)}
+          aria-label="التنقل السريع"
+        >
           {nav.map(({ href, short, Icon }) => (
             <Link
               key={href}

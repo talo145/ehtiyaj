@@ -235,3 +235,20 @@ export function AccountMark({ size = 24 }: P) {
     </svg>
   );
 }
+
+/** سهم الرجوع. في القراءة من اليمين لليسار يشير إلى اليمين. */
+export function BackIcon({ size = 16 }: P) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      aria-hidden="true"
+    >
+      <path d="M8 4.5 13.5 10 8 15.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
