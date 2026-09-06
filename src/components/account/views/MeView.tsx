@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
+import { logout } from "@/server/actions/auth";
 import { useAccount } from "../AccountState";
 import { ChevronIcon, ClockIcon, ShieldIcon, SignOutIcon, UserIcon } from "../icons";
 import { ui } from "../pieces";
@@ -15,8 +16,7 @@ const items = [
 /** شاشة «حسابي» — مدخل الجوال إلى صفحات البيانات التي تظهر على سطح المكتب
  *  في القائمة الجانبية. */
 export function MeView() {
-  const { profile, profileComplete, ready } = useAccount();
-  if (!ready) return null;
+  const { user, profile, profileComplete } = useAccount();
 
   return (
     <>
@@ -25,7 +25,7 @@ export function MeView() {
       </div>
 
       <div className={ui.card} style={{ marginBottom: 16 }}>
-        <h2 style={{ fontSize: "1.1rem" }}>{profile.name}</h2>
+        <h2 style={{ fontSize: "1.1rem" }}>{user.name}</h2>
         <p className={ui.sub}>
           {profileComplete
             ? `${profile.city} · ${profile.region}`
@@ -47,10 +47,12 @@ export function MeView() {
         ))}
       </div>
 
-      <Button href="/login" variant="outline" className="mt-[18px] w-full">
-        <SignOutIcon />
-        تسجيل الخروج
-      </Button>
+      <form action={logout} className="mt-[18px]">
+        <Button type="submit" variant="outline" className="w-full">
+          <SignOutIcon />
+          تسجيل الخروج
+        </Button>
+      </form>
     </>
   );
 }

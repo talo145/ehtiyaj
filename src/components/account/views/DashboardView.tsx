@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { needCategoryOptions } from "@/data/need-categories";
+import { formatHijri } from "@/lib/format";
+import type { ProfileView } from "@/server/view-types";
 import { cn } from "@/lib/cn";
 import { useAccount } from "../AccountState";
 import { useNewNeed } from "../AccountShell";
@@ -17,33 +19,17 @@ import {
 } from "../pieces";
 
 /** الخطوات المطلوبة لاكتمال الملف. الترتيب هو ترتيب الظهور في شاشة الإكمال. */
-const steps = [
-  { label: "رقم الجوال والتحقق منه", done: (p: Ready) => p.phoneVerified },
-  { label: "المنطقة والمدينة", done: (p: Ready) => Boolean(p.region && p.city) },
-  { label: "سنة الميلاد", done: (p: Ready) => Boolean(p.birthYear) },
-  { label: "الجنس", done: (p: Ready) => Boolean(p.gender) },
+const steps: { label: string; done: (p: ProfileView) => boolean }[] = [
+  { label: "رقم الجوال والتحقق منه", done: (p) => p.phoneVerified },
+  { label: "المنطقة والمدينة", done: (p) => Boolean(p.region && p.city) },
+  { label: "سنة الميلاد", done: (p) => Boolean(p.birthYear) },
+  { label: "الجنس", done: (p) => Boolean(p.gender) },
 ];
 
-type Ready = {
-  phoneVerified: boolean;
-  region: string;
-  city: string;
-  birthYear: string;
-  gender: string;
-};
-
 export function DashboardView() {
-  const {
-    profile,
-    profileComplete,
-    current,
-    history,
-    notifications,
-    ready,
-  } = useAccount();
+  const { profile, profileComplete, current, history, notifications } =
+    useAccount();
   const requestNewNeed = useNewNeed();
-
-  if (!ready) return null;
 
   const filled = steps.filter((s) => s.done(profile)).length;
 
@@ -51,9 +37,7 @@ export function DashboardView() {
     <>
       <div className={ui.head}>
         <h1>لوحتي</h1>
-        {current ? (
-          <StatusBadge status={current.status} label={current.statusLabel} />
-        ) : null}
+        {current ? <StatusBadge status={current.status} /> : null}
         {profileComplete && current ? (
           <div className={cn(ui.push, ui.wideOnly)}>
             <Button variant="cta" onClick={requestNewNeed}>
@@ -137,16 +121,18 @@ export function DashboardView() {
         <>
           <div className={cn(ui.card, ui.accent)}>
             <div className="flex flex-wrap items-center gap-3">
-              <StatusBadge status={current.status} label={current.statusLabel} />
-              <span className={cn(ui.badge, ui.push, "mono")}>{current.id}</span>
+              <StatusBadge status={current.status} />
+              <span className={cn(ui.badge, ui.push, "mono")}>
+                {current.reference}
+              </span>
             </div>
             <h2 style={{ marginTop: 12, fontSize: "1.16rem" }}>
               {current.subcategory}
             </h2>
             <div className={ui.meta}>
-              <span>{needCategoryOptions[current.category]?.name}</span>
+              <span>{needCategoryOptions[current.categoryId]?.name}</span>
               <span>{current.city}</span>
-              <span>أُرسل في {current.submittedAt}</span>
+              <span>أُرسل في {formatHijri(current.submittedAt)}</span>
             </div>
 
             <div style={{ marginTop: 18 }}>

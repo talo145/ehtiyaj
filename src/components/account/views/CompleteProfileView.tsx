@@ -1,12 +1,22 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
-import { birthYears, genders } from "@/data/account-demo";
-import { contactOptions } from "@/data/need-categories";
+import { birthYears } from "@/data/account-demo";
+import {
+  contactOptions,
+  genderOptions,
+  type ContactMethodValue,
+  type GenderValue,
+} from "@/data/need-categories";
 import { placeCount, placesByGovernorate, regions } from "@/lib/places";
 import { cn } from "@/lib/cn";
+import {
+  requestPhoneCode,
+  saveProfile,
+  verifyPhoneCode,
+} from "@/server/actions/profile";
 import { useAccount } from "../AccountState";
 import { CitySelect } from "../ChoiceGroup";
 import { ui } from "../pieces";
@@ -17,35 +27,65 @@ const PHONE = /^05\d{8}$/;
 /** إكمال البيانات: البوابة الأولى قبل تسجيل أي احتياج.
  *  أربع خطوات مطلوبة — الجوال المحقَّق، المدينة، سنة الميلاد، الجنس. */
 export function CompleteProfileView() {
-  const { profile, completeProfile, ready } = useAccount();
+  const { profile } = useAccount();
   const router = useRouter();
+  const [pending, startTransition] = useTransition();
 
   const [phone, setPhone] = useState(profile.phone);
   const [verified, setVerified] = useState(profile.phoneVerified);
+  const [codeSent, setCodeSent] = useState(false);
+  const [devCode, setDevCode] = useState<string | null>(null);
   const [code, setCode] = useState("");
   const [region, setRegion] = useState(profile.region);
   const [city, setCity] = useState(profile.city);
   const [birthYear, setBirthYear] = useState(profile.birthYear);
-  const [gender, setGender] = useState(profile.gender);
-  const [contactMethod, setContactMethod] = useState(profile.contactMethod);
-
-  if (!ready) return null;
+  const [gender, setGender] = useState<GenderValue | "">(
+    (profile.gender as GenderValue) || "",
+  );
+  const [contactMethod, setContactMethod] = useState<ContactMethodValue>(
+    (profile.contactMethod as ContactMethodValue) || "call",
+  );
+  const [error, setError] = useState<string | null>(null);
 
   const phoneOk = PHONE.test(phone);
-  const filled = [verified, Boolean(region && city), Boolean(birthYear), Boolean(gender)];
-  const done = filled.filter(Boolean).length;
+  const done = [verified, Boolean(region && city), Boolean(birthYear), Boolean(gender)]
+    .filter(Boolean).length;
+
+  function sendCode() {
+    setError(null);
+    startTransition(async () => {
+      const res = await requestPhoneCode(phone);
+      if (!res.ok) return setError(res.error);
+      setCodeSent(true);
+      setDevCode(res.data.devCode ?? null);
+    });
+  }
+
+  function confirmCode() {
+    setError(null);
+    startTransition(async () => {
+      const res = await verifyPhoneCode(phone, code);
+      if (!res.ok) return setError(res.error);
+      setVerified(true);
+      setCodeSent(false);
+      router.refresh();
+    });
+  }
 
   function save() {
-    completeProfile({
-      phone,
-      phoneVerified: verified,
-      region,
-      city,
-      birthYear,
-      gender,
-      contactMethod,
+    setError(null);
+    startTransition(async () => {
+      const res = await saveProfile({
+        region,
+        city,
+        birthYear,
+        gender: gender as GenderValue,
+        contactMethod,
+      });
+      if (!res.ok) return setError(res.error);
+      router.push("/account");
+      router.refresh();
     });
-    router.push("/account");
   }
 
   return (
@@ -85,6 +125,7 @@ export function CompleteProfileView() {
             onChange={(e) => {
               setPhone(e.target.value.replace(/\D/g, "").slice(0, 10));
               setVerified(false);
+              setCodeSent(false);
             }}
           />
           {phone && !phoneOk ? (
@@ -99,7 +140,7 @@ export function CompleteProfileView() {
             <i aria-hidden="true" />
             تم التحقق من الرقم
           </span>
-        ) : phoneOk ? (
+        ) : codeSent ? (
           <div className={form.field}>
             <label htmlFor="code">رمز التحقق</label>
             <input
@@ -112,18 +153,32 @@ export function CompleteProfileView() {
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
             />
             <span className={form.hint}>
-              أُرسل رمز مكوّن من أربعة أرقام إلى رقمك.
+              {devCode
+                ? `لا مزوّد رسائل بعد — الرمز في وضع التطوير: ${devCode}`
+                : "أُرسل رمز مكوّن من أربعة أرقام إلى رقمك."}
             </span>
-            <Button
-              variant="outline"
-              className="mt-3 w-fit"
-              disabled={code.length !== 4}
-              onClick={() => setVerified(true)}
-            >
-              تأكيد الرمز
-            </Button>
+            <div className="mt-3 flex gap-2">
+              <Button
+                variant="outline"
+                disabled={code.length !== 4 || pending}
+                onClick={confirmCode}
+              >
+                تأكيد الرمز
+              </Button>
+              <Button variant="ghost" disabled={pending} onClick={sendCode}>
+                إرسال رمز جديد
+              </Button>
+            </div>
           </div>
-        ) : null}
+        ) : (
+          <Button
+            variant="outline"
+            disabled={!phoneOk || pending}
+            onClick={sendCode}
+          >
+            أرسل رمز التحقق
+          </Button>
+        )}
       </div>
 
       <div className={ui.card} style={{ marginTop: 16 }}>
@@ -156,7 +211,9 @@ export function CompleteProfileView() {
               onChange={setCity}
               disabled={!region}
               groups={region ? placesByGovernorate : []}
-              placeholder={region ? "اختر المدينة أو القرية" : "اختر المنطقة أولًا"}
+              placeholder={
+                region ? "اختر المدينة أو القرية" : "اختر المنطقة أولًا"
+              }
             />
             <span className={form.hint}>
               القائمة تشمل {placeCount} مدينة وقرية وهجرة في الحدود الشمالية.
@@ -193,11 +250,13 @@ export function CompleteProfileView() {
               id="gender"
               className={form.input}
               value={gender}
-              onChange={(e) => setGender(e.target.value)}
+              onChange={(e) => setGender(e.target.value as GenderValue)}
             >
               <option value="">اختر</option>
-              {genders.map((g) => (
-                <option key={g}>{g}</option>
+              {genderOptions.map((g) => (
+                <option key={g.value} value={g.value}>
+                  {g.label}
+                </option>
               ))}
             </select>
           </div>
@@ -209,17 +268,33 @@ export function CompleteProfileView() {
             id="contact"
             className={form.input}
             value={contactMethod}
-            onChange={(e) => setContactMethod(e.target.value)}
+            onChange={(e) =>
+              setContactMethod(e.target.value as ContactMethodValue)
+            }
           >
             {contactOptions.map((c) => (
-              <option key={c.value}>{c.value}</option>
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
             ))}
           </select>
         </div>
       </div>
 
+      {error ? (
+        <p className={form.error} role="alert" style={{ marginTop: 16 }}>
+          {error}
+        </p>
+      ) : null}
+
       <div className={form.actions}>
-        <Button variant="cta" withArrow disabled={done < 4} onClick={save}>
+        <Button
+          variant="cta"
+          withArrow
+          disabled={done < 4 || pending}
+          loading={pending}
+          onClick={save}
+        >
           حفظ وإكمال التسجيل
         </Button>
       </div>

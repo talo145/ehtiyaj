@@ -1,26 +1,32 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/Button";
 import {
   contactOptions,
   contactTimeOptions,
   followedOptions,
+  labelOf,
   mobilityOptions,
   needCategoryOptions,
   recurrenceOptions,
   sinceOptions,
   urgencyOptions,
+  type ContactMethodValue,
+  type MobilityValue,
+  type RecurrenceValue,
+  type SinceValue,
+  type UrgencyValue,
 } from "@/data/need-categories";
 import { placeCount, placesByGovernorate, regions } from "@/lib/places";
 import { cn } from "@/lib/cn";
+import { submitNeed } from "@/server/actions/needs";
 import { useAccount } from "../AccountState";
 import { ChoiceGroup, CitySelect } from "../ChoiceGroup";
 import { categoryIcons } from "../icons";
 import { ui } from "../pieces";
 import form from "../AccountForm.module.css";
-import type { NeedSubmission } from "@/types";
 
 const titles = [
   "نوع الاحتياج",
@@ -33,65 +39,71 @@ const titles = [
 
 const MIN_DESCRIPTION = 20;
 
-type Draft = {
-  category: number | null;
-  subcategory: string;
-  since: string;
-  recurrence: string;
-  region: string;
-  city: string;
-  mobility: string;
-  description: string;
-  urgency: string;
-  followedByProvider: string;
-  contactMethod: string;
-  contactTime: string;
-};
-
 /** استبانة الاحتياج: ست خطوات، لا تُتجاوز خطوة قبل اكتمالها،
  *  وتنتهي بمراجعة وإقرار لأن الاحتياج لا يقبل التعديل بعد الإرسال. */
 export function NeedSurveyView() {
-  const { profile, submitNeed, ready } = useAccount();
+  const { profile } = useAccount();
   const router = useRouter();
+  const [pending, startTransition] = useTransition();
   const [step, setStep] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const [ack, setAck] = useState(false);
-  const [d, setD] = useState<Draft>({
-    category: null,
-    subcategory: "",
-    since: "",
-    recurrence: "",
-    region: profile.region,
-    city: profile.city,
-    mobility: "",
-    description: "",
-    urgency: "",
-    followedByProvider: "",
-    contactMethod: profile.contactMethod,
-    contactTime: "",
-  });
 
-  if (!ready) return null;
-
-  const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
-    setD((s) => ({ ...s, [key]: value }));
+  const [categoryId, setCategoryId] = useState<number | null>(null);
+  const [subcategory, setSubcategory] = useState("");
+  const [since, setSince] = useState<SinceValue | "">("");
+  const [recurrence, setRecurrence] = useState<RecurrenceValue | "">("");
+  const [region, setRegion] = useState(profile.region || regions[0]);
+  const [city, setCity] = useState(profile.city);
+  const [mobility, setMobility] = useState<MobilityValue | "">("");
+  const [description, setDescription] = useState("");
+  const [urgency, setUrgency] = useState<UrgencyValue | "">("");
+  const [followed, setFollowed] = useState<"yes" | "no" | "">("");
+  const [contactMethod, setContactMethod] = useState<ContactMethodValue | "">(
+    (profile.contactMethod as ContactMethodValue) || "call",
+  );
+  const [contactTime, setContactTime] = useState("");
 
   const complete = [
-    d.category !== null && Boolean(d.subcategory),
-    Boolean(d.since && d.recurrence),
-    Boolean(d.region && d.city && d.mobility),
-    d.description.trim().length >= MIN_DESCRIPTION &&
-      Boolean(d.urgency && d.followedByProvider),
-    Boolean(d.contactMethod && d.contactTime),
+    categoryId !== null && Boolean(subcategory),
+    Boolean(since && recurrence),
+    Boolean(region && city && mobility),
+    description.trim().length >= MIN_DESCRIPTION &&
+      Boolean(urgency && followed),
+    Boolean(contactMethod && contactTime),
     ack,
   ];
 
-  function send() {
-    if (d.category === null) return;
-    submitNeed(d as unknown as NeedSubmission);
-    router.push("/account/need");
-  }
+  const category = categoryId !== null ? needCategoryOptions[categoryId] : null;
 
-  const category = d.category !== null ? needCategoryOptions[d.category] : null;
+  function send() {
+    if (categoryId === null) return;
+    setError(null);
+    startTransition(async () => {
+      const res = await submitNeed({
+        categoryId,
+        subcategory,
+        region,
+        city,
+        since: since as SinceValue,
+        recurrence: recurrence as RecurrenceValue,
+        mobility: mobility as MobilityValue,
+        urgency: urgency as UrgencyValue,
+        followedByProvider: followed as "yes" | "no",
+        description: description.trim(),
+        contactMethod: contactMethod as ContactMethodValue,
+        contactTime: contactTime as "morning" | "noon" | "evening" | "any",
+        acknowledged: true,
+      });
+
+      if (!res.ok) {
+        setError(res.error);
+        return;
+      }
+      router.push("/account/need");
+      router.refresh();
+    });
+  }
 
   return (
     <div className={ui.narrow}>
@@ -119,12 +131,12 @@ export function NeedSurveyView() {
               <button
                 key={c.name}
                 type="button"
-                aria-pressed={d.category === c.index}
+                aria-pressed={categoryId === c.index}
                 onClick={() => {
-                  set("category", c.index);
-                  set("subcategory", "");
+                  setCategoryId(c.index);
+                  setSubcategory("");
                 }}
-                className={cn(form.option, d.category === c.index && form.on)}
+                className={cn(form.option, categoryId === c.index && form.on)}
               >
                 <span className={form.mark} aria-hidden="true">
                   {categoryIcons[c.icon]}
@@ -147,9 +159,9 @@ export function NeedSurveyView() {
                   <button
                     key={s}
                     type="button"
-                    aria-pressed={d.subcategory === s}
-                    onClick={() => set("subcategory", s)}
-                    className={cn(form.chip, d.subcategory === s && form.chipOn)}
+                    aria-pressed={subcategory === s}
+                    onClick={() => setSubcategory(s)}
+                    className={cn(form.chip, subcategory === s && form.chipOn)}
                   >
                     {s}
                   </button>
@@ -177,16 +189,16 @@ export function NeedSurveyView() {
           <ChoiceGroup
             label="منذ متى وأنت تحتاج هذا؟"
             options={sinceOptions}
-            value={d.since}
-            onChange={(v) => set("since", v)}
+            value={since}
+            onChange={setSince}
           />
 
           <div style={{ marginTop: 22 }}>
             <ChoiceGroup
               label="هل الحاجة لمرة واحدة أم متكررة؟"
               options={recurrenceOptions}
-              value={d.recurrence}
-              onChange={(v) => set("recurrence", v)}
+              value={recurrence}
+              onChange={setRecurrence}
               columns={2}
             />
           </div>
@@ -206,10 +218,10 @@ export function NeedSurveyView() {
               <select
                 id="need-region"
                 className={form.input}
-                value={d.region}
+                value={region}
                 onChange={(e) => {
-                  set("region", e.target.value);
-                  set("city", "");
+                  setRegion(e.target.value);
+                  setCity("");
                 }}
               >
                 {regions.map((r) => (
@@ -221,8 +233,8 @@ export function NeedSurveyView() {
             <div className={form.field}>
               <label>المدينة أو القرية</label>
               <CitySelect
-                value={d.city}
-                onChange={(v) => set("city", v)}
+                value={city}
+                onChange={setCity}
                 groups={placesByGovernorate}
                 placeholder="اختر المدينة أو القرية"
               />
@@ -236,8 +248,8 @@ export function NeedSurveyView() {
             <ChoiceGroup
               label="هل تستطيع الانتقال لموعد خارج المنزل؟"
               options={mobilityOptions}
-              value={d.mobility}
-              onChange={(v) => set("mobility", v)}
+              value={mobility}
+              onChange={setMobility}
             />
           </div>
         </>
@@ -251,13 +263,13 @@ export function NeedSurveyView() {
               id="desc"
               className={form.input}
               placeholder="اكتب ما تحتاجه ولماذا، وأي تفصيل يساعد الجمعية على فهم حالتك."
-              value={d.description}
-              onChange={(e) => set("description", e.target.value)}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
             <span className={form.hint}>
-              {d.description.trim().length < MIN_DESCRIPTION
+              {description.trim().length < MIN_DESCRIPTION
                 ? `اكتب ${MIN_DESCRIPTION} حرفًا على الأقل — كلما وضح الوصف كان التوجيه أدق.`
-                : `وصف كافٍ (${d.description.trim().length} حرفًا).`}
+                : `وصف كافٍ (${description.trim().length} حرفًا).`}
             </span>
           </div>
 
@@ -271,8 +283,8 @@ export function NeedSurveyView() {
           <ChoiceGroup
             label="ما مدى إلحاح احتياجك؟"
             options={urgencyOptions}
-            value={d.urgency}
-            onChange={(v) => set("urgency", v)}
+            value={urgency}
+            onChange={setUrgency}
           />
           <p className={form.hint} style={{ marginTop: 10 }}>
             هذا تقديرك أنت. الأولوية النهائية تُحدَّد بعد مراجعة الاحتياج.
@@ -282,8 +294,8 @@ export function NeedSurveyView() {
             <ChoiceGroup
               label="هل تتابع حالتك جهة صحية حاليًا؟"
               options={followedOptions}
-              value={d.followedByProvider}
-              onChange={(v) => set("followedByProvider", v)}
+              value={followed}
+              onChange={setFollowed}
               columns={2}
             />
           </div>
@@ -299,16 +311,16 @@ export function NeedSurveyView() {
           <ChoiceGroup
             label="وسيلة التواصل المفضّلة"
             options={contactOptions}
-            value={d.contactMethod}
-            onChange={(v) => set("contactMethod", v)}
+            value={contactMethod}
+            onChange={setContactMethod}
           />
 
           <div style={{ marginTop: 22 }}>
             <ChoiceGroup
               label="الأوقات المناسبة للتواصل"
               options={contactTimeOptions}
-              value={d.contactTime}
-              onChange={(v) => set("contactTime", v)}
+              value={contactTime}
+              onChange={setContactTime}
               columns={2}
             />
           </div>
@@ -325,15 +337,15 @@ export function NeedSurveyView() {
               {(
                 [
                   ["التصنيف", category?.name],
-                  ["النوع", d.subcategory],
-                  ["منذ متى", d.since],
-                  ["طبيعة الحاجة", d.recurrence],
-                  ["الموقع", `${d.city} · ${d.region}`],
-                  ["التنقّل", d.mobility],
-                  ["مدى الإلحاح", d.urgency],
-                  ["جهة تتابع حالتك", d.followedByProvider],
-                  ["وسيلة التواصل", d.contactMethod],
-                  ["وقت التواصل", d.contactTime],
+                  ["النوع", subcategory],
+                  ["منذ متى", labelOf(sinceOptions, since)],
+                  ["طبيعة الحاجة", labelOf(recurrenceOptions, recurrence)],
+                  ["الموقع", `${city} · ${region}`],
+                  ["التنقّل", labelOf(mobilityOptions, mobility)],
+                  ["مدى الإلحاح", labelOf(urgencyOptions, urgency)],
+                  ["جهة تتابع حالتك", labelOf(followedOptions, followed)],
+                  ["وسيلة التواصل", labelOf(contactOptions, contactMethod)],
+                  ["وقت التواصل", labelOf(contactTimeOptions, contactTime)],
                 ] as [string, string | undefined][]
               ).map(([k, v]) => (
                 <div key={k}>
@@ -354,7 +366,7 @@ export function NeedSurveyView() {
                   background: "rgba(4,9,15,.4)",
                 }}
               >
-                {d.description || "—"}
+                {description || "—"}
               </p>
             </div>
           </div>
@@ -374,6 +386,12 @@ export function NeedSurveyView() {
               تعديل الاحتياج بعد إرساله.
             </p>
           </button>
+
+          {error ? (
+            <p className={form.error} role="alert" style={{ marginTop: 14 }}>
+              {error}
+            </p>
+          ) : null}
         </>
       ) : null}
 
@@ -389,7 +407,13 @@ export function NeedSurveyView() {
         )}
 
         {step === titles.length - 1 ? (
-          <Button variant="cta" withArrow disabled={!complete[step]} onClick={send}>
+          <Button
+            variant="cta"
+            withArrow
+            disabled={!complete[step] || pending}
+            loading={pending}
+            onClick={send}
+          >
             إرسال الاحتياج
           </Button>
         ) : (

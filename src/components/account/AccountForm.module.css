@@ -17,6 +17,15 @@
   color: var(--dim);
 }
 
+.error {
+  font-size: 0.84rem;
+  color: #e3796b;
+  border: 1px solid rgba(227, 121, 107, 0.35);
+  background: rgba(227, 121, 107, 0.08);
+  border-radius: 12px;
+  padding: 11px 14px;
+}
+
 .input {
   width: 100%;
   background: rgba(4, 9, 15, 0.55);

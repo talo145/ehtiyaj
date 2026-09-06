@@ -1,17 +1,27 @@
-import { needStages } from "@/data/account-demo";
-import { needCategoryOptions } from "@/data/need-categories";
+import { needStages, statusLabels } from "@/data/account-demo";
+import {
+  contactOptions,
+  contactTimeOptions,
+  labelOf,
+  mobilityOptions,
+  needCategoryOptions,
+  recurrenceOptions,
+  sinceOptions,
+  urgencyOptions,
+} from "@/data/need-categories";
+import { formatHijri, formatHijriTime, formatRelative } from "@/lib/format";
 import { cn } from "@/lib/cn";
 import type {
-  BeneficiaryNeed,
-  BeneficiaryNotification,
-  NeedRecord,
-  NeedStatus,
-} from "@/types";
+  HistoryItemView,
+  NeedView,
+  NeedStatusValue,
+  NotificationView,
+} from "@/server/view-types";
 import { BellIcon } from "./icons";
 import styles from "./AccountUi.module.css";
 
 /** نبرة الوسم: البرتقالي للمراجعة، الأخضر لما هو حيّ، الرمادي لما أُغلق. */
-const tone: Record<NeedStatus, string> = {
+const tone: Record<NeedStatusValue, string> = {
   new: styles.review,
   review: styles.review,
   processing: styles.live,
@@ -22,23 +32,21 @@ const tone: Record<NeedStatus, string> = {
 
 export function StatusBadge({
   status,
-  label,
   className,
 }: {
-  status: NeedStatus;
-  label: string;
+  status: NeedStatusValue;
   className?: string;
 }) {
   return (
     <span className={cn(styles.badge, tone[status], className)}>
       <i aria-hidden="true" />
-      {label}
+      {statusLabels[status]}
     </span>
   );
 }
 
 /** المسار الأربعي كما يراه المستفيد: ما مضى، وأين هو الآن، وما لم يبدأ. */
-export function NeedTimeline({ need }: { need: BeneficiaryNeed }) {
+export function NeedTimeline({ need }: { need: NeedView }) {
   const reached = needStages.findIndex((s) => s.status === need.status);
 
   return (
@@ -46,15 +54,23 @@ export function NeedTimeline({ need }: { need: BeneficiaryNeed }) {
       {needStages.map((stage, i) => {
         const event = need.events.find((e) => e.status === stage.status);
         const state =
-          i < reached ? styles.passed : i === reached ? styles.current : styles.pending;
+          i < reached
+            ? styles.passed
+            : i === reached
+              ? styles.current
+              : styles.pending;
 
         return (
           <div key={stage.status} className={cn(styles.step, state)}>
             <span className={styles.knob} aria-hidden="true" />
             <div>
-              <b>{stage.title}</b>
-              <span className={styles.when}>{event ? event.at : "لم تبدأ بعد"}</span>
-              {event?.note ? <span className={styles.note}>{event.note}</span> : null}
+              <b>{event?.title ?? stage.title}</b>
+              <span className={styles.when}>
+                {event ? formatHijriTime(event.at) : "لم تبدأ بعد"}
+              </span>
+              {event?.note ? (
+                <span className={styles.note}>{event.note}</span>
+              ) : null}
             </div>
           </div>
         );
@@ -64,7 +80,7 @@ export function NeedTimeline({ need }: { need: BeneficiaryNeed }) {
 }
 
 /** تظهر بعد بدء المعالجة فقط — قبلها لا جهة بعد. */
-export function AssociationCard({ need }: { need: BeneficiaryNeed }) {
+export function AssociationCard({ need }: { need: NeedView }) {
   if (!need.association) return null;
 
   return (
@@ -86,15 +102,26 @@ export function AssociationCard({ need }: { need: BeneficiaryNeed }) {
   );
 }
 
-export function NeedFacts({ need }: { need: BeneficiaryNeed }) {
+const priorityLabels = {
+  high: "عالية",
+  medium: "متوسطة",
+  low: "منخفضة",
+} as const;
+
+export function NeedFacts({ need }: { need: NeedView }) {
   const rows: [string, string][] = [
-    ["رقم الاحتياج", need.id],
-    ["التصنيف", needCategoryOptions[need.category]?.name ?? "—"],
+    ["رقم الاحتياج", need.reference],
+    ["التصنيف", needCategoryOptions[need.categoryId]?.name ?? "—"],
     ["التصنيف الفرعي", need.subcategory],
     ["الموقع", `${need.city} · ${need.region}`],
-    ["مدى الإلحاح", need.urgency],
-    ["تاريخ الإرسال", need.submittedAt],
-    ["الأولوية", need.priority ?? "قيد التحديد"],
+    ["منذ متى", labelOf(sinceOptions, need.since)],
+    ["طبيعة الحاجة", labelOf(recurrenceOptions, need.recurrence)],
+    ["التنقّل", labelOf(mobilityOptions, need.mobility)],
+    ["مدى الإلحاح", labelOf(urgencyOptions, need.urgency)],
+    ["وسيلة التواصل", labelOf(contactOptions, need.contactMethod)],
+    ["وقت التواصل", labelOf(contactTimeOptions, need.contactTime)],
+    ["تاريخ الإرسال", formatHijri(need.submittedAt)],
+    ["الأولوية", need.priority ? priorityLabels[need.priority] : "قيد التحديد"],
   ];
 
   return (
@@ -109,7 +136,7 @@ export function NeedFacts({ need }: { need: BeneficiaryNeed }) {
   );
 }
 
-export function HistoryRows({ items }: { items: NeedRecord[] }) {
+export function HistoryRows({ items }: { items: HistoryItemView[] }) {
   return (
     <div className={styles.stack}>
       {items.map((h) => (
@@ -117,28 +144,20 @@ export function HistoryRows({ items }: { items: NeedRecord[] }) {
           <div>
             <b>{h.title}</b>
             <div className={styles.meta}>
-              <span>{h.category}</span>
-              <span>{h.closedAt}</span>
+              <span>{needCategoryOptions[h.categoryId]?.name}</span>
+              <span>{formatHijri(h.closedAt)}</span>
               {h.association ? <span>{h.association}</span> : null}
-              <span className="mono">{h.id}</span>
+              <span className="mono">{h.reference}</span>
             </div>
           </div>
-          <StatusBadge
-            status={h.status}
-            label={h.statusLabel}
-            className={styles.rowBadge}
-          />
+          <StatusBadge status={h.status} className={styles.rowBadge} />
         </div>
       ))}
     </div>
   );
 }
 
-export function NotificationRows({
-  items,
-}: {
-  items: BeneficiaryNotification[];
-}) {
+export function NotificationRows({ items }: { items: NotificationView[] }) {
   if (!items.length) {
     return <p className={styles.sub}>لا إشعارات.</p>;
   }
@@ -146,14 +165,17 @@ export function NotificationRows({
   return (
     <div className={styles.stack}>
       {items.map((n) => (
-        <div key={n.id} className={cn(styles["note-i"], n.unread && styles.unread)}>
+        <div
+          key={n.id}
+          className={cn(styles["note-i"], n.unread && styles.unread)}
+        >
           <span className={styles.noteIcon} aria-hidden="true">
             <BellIcon size={16} />
           </span>
           <div>
             <b>{n.title}</b>
             <p>{n.body}</p>
-            <span className={styles.when}>{n.at}</span>
+            <span className={styles.when}>{formatRelative(n.at)}</span>
           </div>
         </div>
       ))}

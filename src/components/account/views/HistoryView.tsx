@@ -5,19 +5,17 @@ import { cn } from "@/lib/cn";
 import { useAccount } from "../AccountState";
 import { ClockIcon } from "../icons";
 import { HistoryRows, ui } from "../pieces";
-import type { NeedStatus } from "@/types";
+import type { NeedStatusValue } from "@/server/view-types";
 
-const filters: { key: "all" | NeedStatus; label: string }[] = [
+const filters: { key: "all" | NeedStatusValue; label: string }[] = [
   { key: "all", label: "الكل" },
   { key: "responded", label: "تمت الاستجابة" },
   { key: "withdrawn", label: "مغلق" },
 ];
 
 export function HistoryView() {
-  const { history, ready } = useAccount();
-  const [filter, setFilter] = useState<"all" | NeedStatus>("all");
-
-  if (!ready) return null;
+  const { history } = useAccount();
+  const [filter, setFilter] = useState<"all" | NeedStatusValue>("all");
 
   const shown =
     filter === "all"

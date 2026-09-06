@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { logout } from "@/server/actions/auth";
 import { cn } from "@/lib/cn";
 import { useAccount } from "./AccountState";
 import {
@@ -56,13 +57,13 @@ function isActive(pathname: string, href: string) {
 }
 
 export function AccountShell({ children }: { children: React.ReactNode }) {
-  const { profile, profileComplete, hasOpenNeed, history, notifications } =
+  const { user, profile, profileComplete, hasOpenNeed, history, unreadCount } =
     useAccount();
   const pathname = usePathname();
   const router = useRouter();
   const [gate, setGate] = useState<Gate>(null);
 
-  const unread = notifications.filter((n) => n.unread).length;
+  const unread = unreadCount;
   /** الزر العائم لا يظهر قبل أول احتياج — بطاقة اللوحة تكفي حينها. */
   const showFab = profileComplete && (hasOpenNeed || history.length > 0);
 
@@ -94,7 +95,7 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
           </Link>
 
           <div className={styles.who}>
-            <b>{profile.name}</b>
+            <b>{user.name}</b>
             <span>
               {profile.city
                 ? `${profile.city} · ${profile.region}`
@@ -102,9 +103,15 @@ export function AccountShell({ children }: { children: React.ReactNode }) {
             </span>
           </div>
 
-          <Link href="/login" className={styles.iconBtn} aria-label="تسجيل الخروج">
-            <SignOutIcon />
-          </Link>
+          <form action={logout}>
+            <button
+              type="submit"
+              className={styles.iconBtn}
+              aria-label="تسجيل الخروج"
+            >
+              <SignOutIcon />
+            </button>
+          </form>
         </header>
 
         <div className={styles.shell}>

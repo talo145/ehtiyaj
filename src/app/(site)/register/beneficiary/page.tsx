@@ -42,6 +42,7 @@ export default function BeneficiaryRegisterPage() {
         emailPlaceholder="name@example.com"
         emailHint="يُستخدم لتسجيل الدخول وإشعارات حالة احتياجك."
         documents={beneficiaryDocuments}
+        connected
         submitLabel="إنشاء الحساب"
       />
     </AuthShell>

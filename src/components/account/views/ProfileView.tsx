@@ -1,17 +1,21 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
+import {
+  contactOptions,
+  genderOptions,
+  labelOf,
+} from "@/data/need-categories";
 import { cn } from "@/lib/cn";
 import { useAccount } from "../AccountState";
 import { ui } from "../pieces";
 
 export function ProfileView() {
-  const { profile, profileComplete, ready } = useAccount();
-  if (!ready) return null;
+  const { user, profile, profileComplete } = useAccount();
 
   const fields: [string, string, string?][] = [
-    ["الاسم الكامل", profile.name, "يظهر للجمعية التي تعالج احتياجك فقط."],
-    ["البريد الإلكتروني", profile.email, "لتسجيل الدخول."],
+    ["الاسم الكامل", user.name, "يظهر للجمعية التي تعالج احتياجك فقط."],
+    ["البريد الإلكتروني", user.email, "لتسجيل الدخول."],
     [
       "رقم الجوال",
       profile.phone || "—",
@@ -26,8 +30,8 @@ export function ProfileView() {
       "تحدّد الجمعيات التي يصلها احتياجك.",
     ],
     ["سنة الميلاد", profile.birthYear || "—", "هجري."],
-    ["الجنس", profile.gender || "—"],
-    ["وسيلة التواصل المفضّلة", profile.contactMethod],
+    ["الجنس", profile.gender ? labelOf(genderOptions, profile.gender) : "—"],
+    ["وسيلة التواصل المفضّلة", labelOf(contactOptions, profile.contactMethod)],
   ];
 
   return (
@@ -39,7 +43,7 @@ export function ProfileView() {
       <div className={ui.card} style={{ marginBottom: 16 }}>
         <div className="flex flex-wrap items-center gap-3">
           <div>
-            <h2 style={{ fontSize: "1.15rem" }}>{profile.name}</h2>
+            <h2 style={{ fontSize: "1.15rem" }}>{user.name}</h2>
             <p className={ui.sub}>
               حساب مستفيد{profile.city ? ` · ${profile.city}` : ""}
             </p>

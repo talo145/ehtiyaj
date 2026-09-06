@@ -4,8 +4,9 @@ import { cn } from "@/lib/cn";
 import type { SurveyChoice } from "@/data/need-categories";
 import form from "./AccountForm.module.css";
 
-/** اختيار واحد من مجموعة — نمط موحّد في الاستبانة كلها. */
-export function ChoiceGroup({
+/** اختيار واحد من مجموعة — نمط موحّد في الاستبانة كلها.
+ *  القيمة المخزَّنة ثابتة، والنصّ المعروض قابل للتغيير دون أثر على البيانات. */
+export function ChoiceGroup<V extends string>({
   label,
   options,
   value,
@@ -13,9 +14,9 @@ export function ChoiceGroup({
   columns = 1,
 }: {
   label?: string;
-  options: SurveyChoice[];
-  value: string | null;
-  onChange: (v: string) => void;
+  options: readonly SurveyChoice<V>[];
+  value: V | "";
+  onChange: (v: V) => void;
   columns?: 1 | 2;
 }) {
   return (
@@ -32,7 +33,7 @@ export function ChoiceGroup({
           >
             <span className={form.radio} aria-hidden="true" />
             <span>
-              <b>{o.value}</b>
+              <b>{o.label}</b>
               {o.hint ? <span className={form.optionHint}>{o.hint}</span> : null}
             </span>
           </button>

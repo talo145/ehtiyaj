@@ -16,11 +16,10 @@ import {
 import shell from "../AccountShell.module.css";
 
 export function NeedView() {
-  const { current, profileComplete, ready, withdrawNeed } = useAccount();
+  const { current, profileComplete, withdrawNeed } = useAccount();
   const requestNewNeed = useNewNeed();
   const [confirming, setConfirming] = useState(false);
-
-  if (!ready) return null;
+  const [error, setError] = useState<string | null>(null);
 
   if (!current) {
     return (
@@ -55,8 +54,10 @@ export function NeedView() {
     <>
       <div className={ui.head}>
         <h1>احتياجي</h1>
-        <StatusBadge status={current.status} label={current.statusLabel} />
-        <span className={cn(ui.badge, ui.push, "mono")}>{current.id}</span>
+        <StatusBadge status={current.status} />
+        <span className={cn(ui.badge, ui.push, "mono")}>
+          {current.reference}
+        </span>
       </div>
 
       <div className={ui.cols}>
@@ -137,9 +138,10 @@ export function NeedView() {
               <Button
                 variant="outline"
                 className="!border-[rgba(227,121,107,0.4)] !text-[#E3796B]"
-                onClick={() => {
-                  withdrawNeed();
+                onClick={async () => {
+                  const err = await withdrawNeed();
                   setConfirming(false);
+                  setError(err);
                 }}
               >
                 نعم، اسحب الاحتياج
@@ -150,6 +152,23 @@ export function NeedView() {
             </div>
           </div>
         </div>
+      ) : null}
+
+      {error ? (
+        <p
+          role="alert"
+          style={{
+            marginTop: 16,
+            color: "#E3796B",
+            fontSize: ".88rem",
+            border: "1px solid rgba(227,121,107,.35)",
+            background: "rgba(227,121,107,.08)",
+            borderRadius: 12,
+            padding: "11px 14px",
+          }}
+        >
+          {error}
+        </p>
       ) : null}
     </>
   );

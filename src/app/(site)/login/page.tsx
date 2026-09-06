@@ -29,6 +29,7 @@ export default function LoginPage() {
       }
     >
       <LoginForm
+        connected
         emailLabel="البريد الإلكتروني"
         emailPlaceholder="name@example.com"
         submitLabel="تسجيل الدخول"

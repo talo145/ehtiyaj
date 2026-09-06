@@ -5,18 +5,20 @@ import { useAccount } from "../AccountState";
 import { NotificationRows, ui } from "../pieces";
 
 export function NotificationsView() {
-  const { notifications, markNotificationsRead, ready } = useAccount();
-  if (!ready) return null;
-
-  const unread = notifications.filter((n) => n.unread).length;
+  const { notifications, markNotificationsRead, unreadCount, pending } =
+    useAccount();
 
   return (
     <>
       <div className={ui.head}>
         <h1>الإشعارات</h1>
-        {unread > 0 ? (
+        {unreadCount > 0 ? (
           <div className={ui.push}>
-            <Button variant="ghost" onClick={markNotificationsRead}>
+            <Button
+              variant="ghost"
+              disabled={pending}
+              onClick={markNotificationsRead}
+            >
               تعليم الكل كمقروء
             </Button>
           </div>

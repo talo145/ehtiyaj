@@ -4,7 +4,6 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { beneficiaryDocuments } from "@/data/legal";
 import { cn } from "@/lib/cn";
-import { useAccount } from "../AccountState";
 import { ui } from "../pieces";
 import shell from "../AccountShell.module.css";
 
@@ -12,10 +11,7 @@ import shell from "../AccountShell.module.css";
 const consentAt = "عند إنشاء الحساب";
 
 export function PrivacyView() {
-  const { ready } = useAccount();
   const [confirming, setConfirming] = useState(false);
-
-  if (!ready) return null;
 
   return (
     <div className={cn(ui.narrow, ui.stack)}>

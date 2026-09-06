@@ -157,3 +157,15 @@
 .submit {
   width: 100%;
 }
+
+/* خطأ يخصّ النموذج كله لا حقلًا بعينه — رسالة الخادم. */
+.formError {
+  margin: 4px 0 2px;
+  font-size: 0.85rem;
+  color: #e3796b;
+  border: 1px solid rgba(227, 121, 107, 0.35);
+  background: rgba(227, 121, 107, 0.08);
+  border-radius: 12px;
+  padding: 11px 14px;
+  line-height: 1.7;
+}

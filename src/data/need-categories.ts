@@ -1,6 +1,7 @@
-/** تصنيفات الاحتياج كما تظهر في استبانة المستفيد.
- *  التصنيفات الرئيسية هي نفسها المعتمَدة في خريطة الاحتياج (`needCategories`)
- *  حتى لا تتفرّق التسميات بين ما يسجّله المستفيد وما يُعرض على الخريطة. */
+/** تصنيفات الاحتياج وخيارات الاستبانة.
+ *
+ *  كل خيار له قيمة ثابتة تُخزَّن في قاعدة البيانات، ونصّ عربي يُعرض فقط.
+ *  فصلهما يعني أن تعديل الصياغة لا يفسد بيانات محفوظة. */
 
 import { needCategories } from "./categories";
 
@@ -13,14 +14,13 @@ export type CategoryIcon =
   | "speak";
 
 export interface NeedCategoryOption {
-  /** فهرس التصنيف داخل `needCategories`. */
+  /** فهرس التصنيف داخل `needCategories` — نفسه المستخدم في خريطة الاحتياج. */
   index: number;
   name: string;
   icon: CategoryIcon;
   subcategories: string[];
 }
 
-/** التصنيفات الفرعية مرتّبة على ترتيب `needCategories` نفسه. */
 const subcategories: { icon: CategoryIcon; items: string[] }[] = [
   {
     icon: "device",
@@ -101,49 +101,71 @@ export const needCategoryOptions: NeedCategoryOption[] = needCategories.map(
   }),
 );
 
-/** خيارات بقية أسئلة الاستبانة — نص واحد أو نص وشرح. */
-export type SurveyChoice = { value: string; hint?: string };
+/** خيار في الاستبانة: قيمة تُخزَّن، ونصّ يُعرض، وشرح اختياري. */
+export interface SurveyChoice<V extends string = string> {
+  value: V;
+  label: string;
+  hint?: string;
+}
 
-const choice = (value: string, hint?: string): SurveyChoice => ({ value, hint });
+export type SinceValue = "under_month" | "one_to_three" | "over_three" | "years";
+export type RecurrenceValue = "once" | "recurring";
+export type MobilityValue = "yes" | "hard" | "no";
+export type UrgencyValue = "days" | "weeks" | "none";
+export type ContactMethodValue = "call" | "sms" | "whatsapp";
+export type GenderValue = "male" | "female";
 
-export const sinceOptions: SurveyChoice[] = [
-  choice("أقل من شهر"),
-  choice("من شهر إلى ثلاثة أشهر"),
-  choice("أكثر من ثلاثة أشهر"),
-  choice("حاجة مستمرة منذ سنوات"),
+export const sinceOptions: SurveyChoice<SinceValue>[] = [
+  { value: "under_month", label: "أقل من شهر" },
+  { value: "one_to_three", label: "من شهر إلى ثلاثة أشهر" },
+  { value: "over_three", label: "أكثر من ثلاثة أشهر" },
+  { value: "years", label: "حاجة مستمرة منذ سنوات" },
 ];
 
-export const recurrenceOptions: SurveyChoice[] = [
-  choice("لمرة واحدة", "جهاز أو إجراء يكفي مرة واحدة"),
-  choice("متكررة", "تحتاجها بشكل دوري أو مستمر"),
+export const recurrenceOptions: SurveyChoice<RecurrenceValue>[] = [
+  { value: "once", label: "لمرة واحدة", hint: "جهاز أو إجراء يكفي مرة واحدة" },
+  { value: "recurring", label: "متكررة", hint: "تحتاجها بشكل دوري أو مستمر" },
 ];
 
-export const mobilityOptions: SurveyChoice[] = [
-  choice("نعم", "أستطيع الوصول بنفسي"),
-  choice("بصعوبة", "أحتاج مرافقًا أو وسيلة نقل"),
-  choice("لا", "الخدمة يجب أن تصلني في المنزل"),
+export const mobilityOptions: SurveyChoice<MobilityValue>[] = [
+  { value: "yes", label: "نعم", hint: "أستطيع الوصول بنفسي" },
+  { value: "hard", label: "بصعوبة", hint: "أحتاج مرافقًا أو وسيلة نقل" },
+  { value: "no", label: "لا", hint: "الخدمة يجب أن تصلني في المنزل" },
 ];
 
-export const urgencyOptions: SurveyChoice[] = [
-  choice("عاجل — خلال أيام", "تأخّره يضر بحالتك"),
-  choice("خلال أسابيع", "مهم لكن يحتمل الانتظار"),
-  choice("غير عاجل", "تحسين لوضعك الحالي"),
+export const urgencyOptions: SurveyChoice<UrgencyValue>[] = [
+  { value: "days", label: "عاجل — خلال أيام", hint: "تأخّره يضر بحالتك" },
+  { value: "weeks", label: "خلال أسابيع", hint: "مهم لكن يحتمل الانتظار" },
+  { value: "none", label: "غير عاجل", hint: "تحسين لوضعك الحالي" },
 ];
 
-export const followedOptions: SurveyChoice[] = [
-  choice("نعم", "مستشفى أو مركز صحي"),
-  choice("لا"),
+export const followedOptions: SurveyChoice<"yes" | "no">[] = [
+  { value: "yes", label: "نعم", hint: "مستشفى أو مركز صحي" },
+  { value: "no", label: "لا" },
 ];
 
-export const contactOptions: SurveyChoice[] = [
-  choice("اتصال هاتفي"),
-  choice("رسالة نصية"),
-  choice("واتساب"),
+export const contactOptions: SurveyChoice<ContactMethodValue>[] = [
+  { value: "call", label: "اتصال هاتفي" },
+  { value: "sms", label: "رسالة نصية" },
+  { value: "whatsapp", label: "واتساب" },
 ];
 
 export const contactTimeOptions: SurveyChoice[] = [
-  choice("صباحًا (8 – 12)"),
-  choice("ظهرًا (12 – 4)"),
-  choice("مساءً (4 – 9)"),
-  choice("أي وقت"),
+  { value: "morning", label: "صباحًا (8 – 12)" },
+  { value: "noon", label: "ظهرًا (12 – 4)" },
+  { value: "evening", label: "مساءً (4 – 9)" },
+  { value: "any", label: "أي وقت" },
 ];
+
+export const genderOptions: SurveyChoice<GenderValue>[] = [
+  { value: "male", label: "ذكر" },
+  { value: "female", label: "أنثى" },
+];
+
+/** نصّ الخيار من قيمته — للمراجعة وصفحات العرض. */
+export function labelOf(
+  options: readonly SurveyChoice<string>[],
+  value: string | null | undefined,
+): string {
+  return options.find((o) => o.value === value)?.label ?? "—";
+}
